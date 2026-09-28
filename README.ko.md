@@ -4,6 +4,22 @@ Obsidian에서 YouTube와 로컬 영상을 보고, 이중 언어 자막·스크�
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## Organize local playlists
+
+**One folder, one playlist.** Click **Add playlist**, choose any local folder, and let Video Player organize its videos into chapters with natural ordering and durations. Your files stay where they are.
+
+![Add a playlist, mark previous lessons watched, and continue playback](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.gif)
+
+[MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.en.srt)
+
+- **Already watched some lessons?** Click **Mark watched** on a video, or select lessons and click **Mark as watched**. Completion totals update immediately. **Mark as unwatched** reverses the selection.
+- **Continue watching** resumes your saved position. Finishing a video marks it watched and offers **Play next**.
+- **Rescan** adds new videos while preserving progress. Missing files keep their records; use **Locate folder** if you move the folder.
+- Reorder videos within a chapter, edit playlist names, and keep an associated note for each video.
+
+Works for courses, TV series, documentaries, or any folder of local videos. Duration scanning uses local **ffprobe**; configure its path under **Duration settings** if needed. Unknown durations can be filled in during playback. Playlists and progress are saved in `video-library.json` in the plugin folder, separately from AI settings. No AI account is needed for playlists or basic playback.
+
+
 ## 사용 방법 살펴보기
 
 각 GIF는 한 가지 기능을 보여 줍니다. 영어 안내, 마우스 클릭 강조, 키보드 단축키 표시가 포함되어 있습니다.

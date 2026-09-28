@@ -8,9 +8,24 @@ Watch, understand and take notes without leaving Obsidian. Open YouTube or local
 
 Short GIFs show one feature at a time, with English instructions, highlighted mouse clicks and keyboard shortcuts.
 
-[**All 13 feature demos**](docs/demos.md) · [Full video guide](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+[**All 14 feature demos**](docs/demos.md) · [Full video guide](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
 
 ![See it in action](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
+## Organize local playlists
+
+**One folder, one playlist.** Click **Add playlist**, choose any local folder, and let Video Player organize its videos into chapters with natural ordering and durations. Your files stay where they are.
+
+![Add a playlist, mark previous lessons watched, and continue playback](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.gif)
+
+[MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.en.srt)
+
+- **Already watched some lessons?** Click **Mark watched** on a video, or select lessons and click **Mark as watched**. Completion totals update immediately. **Mark as unwatched** reverses the selection.
+- **Continue watching** resumes your saved position. Finishing a video marks it watched and offers **Play next**.
+- **Rescan** adds new videos while preserving progress. Missing files keep their records; use **Locate folder** if you move the folder.
+- Reorder videos within a chapter, edit playlist names, and keep an associated note for each video.
+
+Works for courses, TV series, documentaries, or any folder of local videos. Duration scanning uses local **ffprobe**; configure its path under **Duration settings** if needed. Unknown durations can be filled in during playback. Playlists and progress are saved in `video-library.json` in the plugin folder, separately from AI settings. No AI account is needed for playlists or basic playback.
 
 ## Translate captions from Web Viewer
 
@@ -24,6 +39,7 @@ Reads accessible HTML5 text tracks; YouTube can use the existing yt-dlp fallback
 
 ## What you can do
 
+- Organize local folders into playlists, mark watched lessons, and resume your progress.
 - Play YouTube and local videos inside your vault.
 - Read bilingual subtitles and export captions as a note.
 - Capture screenshots with links back to the video timestamp.

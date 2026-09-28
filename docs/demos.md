@@ -6,6 +6,7 @@ Each GIF covers one feature. Read the two steps, then follow the highlighted con
 
 | Feature | Demonstration |
 | --- | --- |
+| Organize local playlists and track progress | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.gif) |
 | Translate captions from Web Viewer | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif) |
 | Open a local video | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-local-video.gif) |
 | Choose embedded CC or a subtitle file | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/choose-subtitles.gif) |
@@ -21,6 +22,20 @@ Each GIF covers one feature. Read the two steps, then follow the highlighted con
 | Choose your AI backend | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ai-backend.gif) |
 
 <details open>
+<summary>Organize local playlists and track progress</summary>
+
+1. Click **Add playlist** and select a folder. Subfolders become chapters.
+2. Select lessons you have already completed and click **Mark as watched**. Use **Continue watching** to pick up the next lesson.
+
+![Local playlists](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.gif)
+
+[Watch MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.en.srt)
+
+Recorded in Obsidian with original sample videos. All shown playlist actions and playback progress are real.
+
+</details>
+
+<details>
 <summary>Translate captions from Web Viewer</summary>
 
 Open a video in the desktop **Web viewer** core plugin and enable captions on the website. Run **Translate video subtitles from Web Viewer**, then click **Translate transcript with AI**. The video stays on the original page; the adjacent panel shows only the toolbar and transcript, with synchronized highlighting, playback controls and clickable timestamps.

@@ -1,3 +1,4 @@
+import VideoLibrary from "./video-library/view";
 import { WebViewerElement, WebSelection, WEB_SELECTION_PROBE, WEB_SELECTION_CLEANUP, WEB_VIDEO_PROBE, parseWebVideo, webVideoScript } from "./web-viewer";
 import { buildClaudeArgs } from "./claude-args";
 import { VIDEO_YOUTUBE_PROTOCOL, VIDEO_LOCAL_PROTOCOL } from "./product";
@@ -511,7 +512,10 @@ export default class ContextualAIReaderPlugin extends Plugin {
     } catch (error) { new Notice(`Could not read Web Viewer subtitles: ${getErrorMessage(error)}`); }
   }
 
+  videoLibrary?: VideoLibrary;
+
   private registerVideoFeatures() {
+    this.videoLibrary = this.addChild(new VideoLibrary(this));
     const openPlayer = async () => {
       const existing = this.app.workspace.getLeavesOfType(YOUTUBE_VIEW_TYPE)[0];
       if (existing) { await this.app.workspace.revealLeaf(existing); return; }
@@ -536,6 +540,8 @@ export default class ContextualAIReaderPlugin extends Plugin {
     });
 
     this.registerView(YOUTUBE_VIEW_TYPE, (leaf) => new YouTubeLearningView(leaf, {
+      openVideoLibrary: () => { void this.videoLibrary?.open(); },
+      organizeVideoFolder: () => this.videoLibrary?.folderModal(),
       createVideoChatHost: (view) => ({
         backendLabel: () => `${this.getBackendLabel()} · ${this.getVideoChatBackendConfig().model}`,
         getMessages: (data) => this.settings.videoChats[videoChatKey(data)]?.messages ?? [],
