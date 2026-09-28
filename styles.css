@@ -684,3 +684,9 @@
 .video-chat-composer textarea { width: 100%; min-height: 72px; max-height: 180px; resize: vertical; font-size: 14px; }
 .video-chat-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .video-chat-hint { font-size: 10px; color: var(--text-faint); margin-top: 8px; }
+
+/* Web Viewer owns playback; the connected panel only needs controls and transcript. */
+.youtube-reader-shell.youtube-reader-web-transcript {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+}

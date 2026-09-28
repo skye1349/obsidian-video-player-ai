@@ -8,9 +8,19 @@ Regardez YouTube et vos vidéos locales dans Obsidian, apprenez avec des sous-ti
 
 Chaque GIF présente une fonction, avec des instructions en anglais, les clics mis en évidence et les raccourcis clavier.
 
-[**Voir les 12 démonstrations**](docs/demos.md) · [Guide vidéo complet](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+[**Voir les 13 démonstrations**](docs/demos.md) · [Guide vidéo complet](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
 
 ![Voir le plugin en action](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
+## Traduire les sous-titres de Web Viewer
+
+Ouvrez une vidéo dans **Web viewer** et activez les sous-titres du site. Lancez **Translate video subtitles from Web Viewer**, puis **Translate transcript with AI**. La vidéo reste sur sa page ; le panneau voisin affiche uniquement la barre d’outils et la transcription, avec surlignage synchronisé, commandes et horodatages cliquables.
+
+![Traduire les sous-titres de Web Viewer](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif)
+
+[MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.en.srt)
+
+Lit les pistes de texte HTML5 accessibles ; YouTube peut utiliser yt-dlp. Reconnectez après un changement de vidéo ou pour actualiser des sous-titres dynamiques. Les lecteurs d’une autre origine, les sous-titres propriétaires ou incrustés, la transcription audio web générique et la capture d’images web ne sont pas pris en charge. Le chat peut utiliser les sous-titres extraits.
 
 ## Ce que vous pouvez faire
 

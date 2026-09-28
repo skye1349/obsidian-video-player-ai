@@ -1,3 +1,4 @@
+import type { WebVideoConnection } from "./web-viewer";
 import { VIDEO_VIEW_TYPE, VIDEO_YOUTUBE_PROTOCOL } from "./product";
 import { VideoChatHost, VideoChatPanel } from "./video-chat-panel";
 import { Buffer } from "buffer";
@@ -36,6 +37,7 @@ export interface YouTubeSegment {
 }
 
 export interface YouTubeVideoData {
+  webUrl?: string;
   localPath?: string;
   localTracks?: LocalCaptionTrack[];
   localTrackId?: string;
@@ -216,14 +218,17 @@ export class LocalVideoModal extends Modal {
 }
 
 export function videoTimestampUri(data: YouTubeVideoData, seconds: number): string {
+  if (data.webUrl) return data.webUrl;
   return data.localPath ? localVideoTimestampUri(data.localPath, seconds) : buildYouTubeTimestampUri(data.videoId, seconds);
 }
 
 export function videoSourceUrl(data: YouTubeVideoData): string {
+  if (data.webUrl) return data.webUrl;
   return data.localPath ? localVideoTimestampUri(data.localPath, 0) : `https://www.youtube.com/watch?v=${data.videoId}`;
 }
 
 export class YouTubeLearningView extends ItemView {
+  private webConnection?: WebVideoConnection;
   private chatPanel?: VideoChatPanel;
   private chatOpen = false;
   private duration = 0;
@@ -283,6 +288,7 @@ export class YouTubeLearningView extends ItemView {
     this.chatPanel?.unload();
     this.chatPanel = undefined;
     this.loadSerial++;
+    this.webConnection = undefined;
     this.disposeLocalPlayer();
     this.setWindowedFullscreen(false);
     this.containerEl.win.removeEventListener("message", this.handlePlayerMessage);
@@ -388,6 +394,7 @@ export class YouTubeLearningView extends ItemView {
       this.translationRunning = false;
       this.host.stopTranslation();
     }
+    this.webConnection = undefined;
     this.videoId = videoId;
     this.requestedStart = Math.max(0, startSeconds);
     this.data = undefined;
@@ -445,6 +452,7 @@ export class YouTubeLearningView extends ItemView {
 
   async loadLocalVideo(path: string, startSeconds = 0, trackId?: string, transcribe = false) {
     if (!this.host.loadLocalVideo) return;
+    this.webConnection = undefined;
     const serial = ++this.loadSerial;
     if (this.translationRunning) {
       this.translationSerial++;
@@ -535,6 +543,38 @@ export class YouTubeLearningView extends ItemView {
     loading.createEl("p", { text: "The video can still open when captions are unavailable." });
   }
 
+  loadWebVideo(data: YouTubeVideoData, connection: WebVideoConnection, start: number) {
+    this.loadSerial++;
+    this.translationSerial++;
+    if (this.translationRunning) this.host.stopTranslation();
+    this.translationRunning = false;
+    this.webConnection = connection;
+    this.data = data;
+    this.videoId = data.videoId;
+    this.requestedStart = start;
+    this.renderPlayer(data);
+    this.refreshTabTitle();
+    let busy = false;
+    const poll = async () => {
+      if (busy || this.webConnection !== connection) return;
+      busy = true;
+      try {
+        const time = await connection.time();
+        if (this.webConnection !== connection || !Number.isFinite(time)) return;
+        this.currentTime = time;
+        this.updateActiveSegment(time, true);
+      } catch {
+        if (this.webConnection === connection) {
+          this.stopWebviewListening();
+          this.webConnection = undefined;
+          this.setStatus("Web Viewer video closed or changed. Reconnect from Web Viewer.", true);
+        }
+      } finally { busy = false; }
+    };
+    this.playerPollTimer = this.containerEl.win.setInterval(() => { void poll(); }, 250);
+    void this.host.saveVideo(data).catch(() => {});
+  }
+
   private renderPlayer(data: YouTubeVideoData) {
     this.chatPanel?.unload();
     this.chatPanel = undefined;
@@ -551,6 +591,7 @@ export class YouTubeLearningView extends ItemView {
     this.containerEl.empty();
     const shell = this.containerEl.createDiv({ cls: "youtube-reader-shell" });
     shell.dataset.videoId = data.videoId;
+    shell.toggleClass("youtube-reader-web-transcript", Boolean(data.webUrl));
     const main = shell.createDiv({ cls: "youtube-reader-main" });
     const toolbar = main.createDiv({ cls: "youtube-reader-toolbar" });
     toolbar.createDiv({ cls: "youtube-reader-title", text: data.title });
@@ -564,6 +605,7 @@ export class YouTubeLearningView extends ItemView {
       () => this.setWindowedFullscreen(!this.windowedFullscreen)
     );
     this.addToolbarButton(toolbar, "camera", "Copy current video frame", () => {
+      if (data.webUrl) { new Notice("Capture frames from the original Web Viewer page."); return; }
       void this.host.captureVideoFrame(this);
     });
     this.addToolbarButton(toolbar, "file-text", "Create transcript note", () => {
@@ -585,6 +627,7 @@ export class YouTubeLearningView extends ItemView {
       () => this.toggleVideoSubtitles()
     );
     this.addToolbarButton(toolbar, "refresh-cw", "Refresh subtitles and cached transcript", () => {
+      if (data.webUrl) { new Notice("Run Translate video subtitles from Web Viewer again to reload captions."); return; }
       if (data.localPath) void this.loadLocalVideo(data.localPath, this.getCurrentTime(), data.localTrackId);
       else void this.loadVideo(this.videoId, this.currentTime, true);
     });
@@ -594,8 +637,9 @@ export class YouTubeLearningView extends ItemView {
       this.host.stopTranslation();
       this.setStatus("Stopping AI transcript translation…");
     });
-    this.addToolbarButton(toolbar, "external-link", data.localPath ? "Open in default video app" : "Open on YouTube", () => {
-      if (data.localPath) this.host.openLocalExternally?.(data.localPath);
+    this.addToolbarButton(toolbar, "external-link", data.webUrl ? "Open source page" : data.localPath ? "Open in default video app" : "Open on YouTube", () => {
+      if (data.webUrl) this.containerEl.win.open(data.webUrl);
+      else if (data.localPath) this.host.openLocalExternally?.(data.localPath);
       else this.containerEl.win.open(`https://www.youtube.com/watch?v=${this.videoId}&t=${Math.floor(this.currentTime)}s`);
     });
     if (data.localPath) {
@@ -610,32 +654,40 @@ export class YouTubeLearningView extends ItemView {
       });
     }
 
-    this.playerEl = main.createDiv({ cls: "youtube-reader-player" });
-    if (data.localPath) {
-      this.renderLocalPlayer(data);
-    } else if (data.embedAllowed === false) {
-      this.renderWebviewPlayer(data);
-    } else {
-      this.renderIframePlayer(data);
+    this.playerEl = undefined;
+    this.videoSubtitleEl = undefined;
+    this.videoSubtitleOriginalEl = undefined;
+    this.videoSubtitleTranslationEl = undefined;
+    if (!data.webUrl) {
+      this.playerEl = main.createDiv({ cls: "youtube-reader-player" });
+      if (data.localPath) {
+        this.renderLocalPlayer(data);
+      } else if (data.embedAllowed === false) {
+        this.renderWebviewPlayer(data);
+      } else {
+        this.renderIframePlayer(data);
+      }
+      this.renderVideoSubtitleOverlay();
     }
-    this.renderVideoSubtitleOverlay();
 
     this.statusEl = main.createDiv({ cls: "youtube-reader-status" });
     this.setTranscriptStatus(data, data.segments.length > 0
       ? `${data.segments.length} subtitle sentences loaded.`
       : "No subtitle track was found for this video.");
 
-    const resizer = shell.createDiv({
-      attr: {
-        "aria-label": "Resize video and transcript panels",
-        "aria-orientation": "vertical",
-        role: "separator",
-        tabindex: "0",
-        title: "Drag to resize video and transcript panels"
-      },
-      cls: "youtube-reader-resizer"
-    });
-    this.setupPanelResizer(shell, resizer);
+    if (!data.webUrl) {
+      const resizer = shell.createDiv({
+        attr: {
+          "aria-label": "Resize video and transcript panels",
+          "aria-orientation": "vertical",
+          role: "separator",
+          tabindex: "0",
+          title: "Drag to resize video and transcript panels"
+        },
+        cls: "youtube-reader-resizer"
+      });
+      this.setupPanelResizer(shell, resizer);
+    }
 
     const transcriptPane = shell.createDiv({ cls: "youtube-reader-transcript-pane" });
     const transcriptHeader = transcriptPane.createDiv({ cls: "youtube-reader-transcript-header" });
@@ -1065,6 +1117,12 @@ export class YouTubeLearningView extends ItemView {
   }
 
   private postPlayerCommand(func: string, args: unknown[] = []) {
+    if (this.data?.webUrl) {
+      if (this.webConnection && (func === "playVideo" || func === "pauseVideo" || func === "seekTo")) {
+        void this.webConnection.command(func, typeof args[0] === "number" ? args[0] : undefined).catch(() => this.setStatus("Web video unavailable. Reconnect from Web Viewer.", true));
+      }
+      return;
+    }
     if (this.localVideoEl) {
       const video = this.localVideoEl;
       if (func === "playVideo") void video.play().catch((error: unknown) => {

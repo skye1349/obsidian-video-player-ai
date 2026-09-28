@@ -1,6 +1,6 @@
 {
   "name": "video-player-ai",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Watch YouTube and local videos with bilingual subtitles, timestamped screenshots, transcript notes, and AI conversations.",
   "main": "main.js",
   "scripts": {

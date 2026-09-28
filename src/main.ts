@@ -1,3 +1,4 @@
+import { WebViewerElement, WebSelection, WEB_SELECTION_PROBE, WEB_SELECTION_CLEANUP, WEB_VIDEO_PROBE, parseWebVideo, webVideoScript } from "./web-viewer";
 import { buildClaudeArgs } from "./claude-args";
 import { VIDEO_YOUTUBE_PROTOCOL, VIDEO_LOCAL_PROTOCOL } from "./product";
 import { EconomyModels, selectionMode, type ModelSelection } from "./economy-model";
@@ -22,6 +23,7 @@ import {
   TFile,
   TFolder,
   WorkspaceLeaf,
+  View,
   normalizePath,
   setIcon
 } from "obsidian";
@@ -341,6 +343,7 @@ interface YtDlpMetadata {
 }
 
 interface YouTubeCacheEntry {
+  webUrl?: string;
   localPath?: string;
   embedAllowed?: boolean;
   requestedSourceLanguage: string;
@@ -384,6 +387,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
     await this.loadSettings();
     if (HAS_VIDEO) this.registerVideoFeatures();
     if (HAS_TRANSLATOR) this.registerTranslationFeatures();
+    this.registerWebViewerFeatures();
 
     this.statusBarEl = this.addStatusBarItem();
     this.setStatus("");
@@ -417,6 +421,94 @@ export default class ContextualAIReaderPlugin extends Plugin {
     this.addSettingTab(new ContextualAIReaderSettingTab(this.app, this));
 
 
+  }
+
+  private webViewer?: WebViewerElement;
+
+  private registerWebViewerFeatures() {
+    let disposed = false;
+    let busy = false;
+    let selectionGuest: WebViewerElement | undefined;
+    const seen = new Map<WebViewerElement, string>();
+    const guests = () => {
+      const result: WebViewerElement[] = [];
+      this.app.workspace.iterateAllLeaves((leaf) => {
+        if (leaf.view.getViewType() !== "webviewer") return;
+        result.push(...Array.from(leaf.view.containerEl.querySelectorAll<WebViewerElement>("webview")));
+      });
+      return result;
+    };
+    const poll = async () => {
+      if (busy || disposed) return;
+      busy = true;
+      try {
+        const available = guests();
+        for (const guest of seen.keys()) if (!available.includes(guest)) seen.delete(guest);
+        for (const guest of available) {
+          if (!guest.isConnected || !guest.getBoundingClientRect().width) continue;
+          this.webViewer = guest;
+          if (!HAS_TRANSLATOR) continue;
+          try {
+            const selection = await guest.executeJavaScript(WEB_SELECTION_PROBE) as WebSelection | null;
+            if (disposed || !guest.isConnected || !selection) continue;
+            const key = JSON.stringify([selection.revision, selection.text, selection.modified]);
+            if (seen.get(guest) === key) continue;
+            seen.set(guest, key);
+            if (selectionGuest === guest && !selection.text) {
+              if (this.autoTimer) window.clearTimeout(this.autoTimer);
+              this.requestSerial++;
+              this.hidePopup();
+            }
+            if (!this.settings.autoTranslate || !selection.text || selection.text.length < this.settings.minSelectionChars || (this.settings.requireCommandForAutoTranslate && !selection.modified)) continue;
+            if (![selection.x, selection.y, selection.width, selection.height, selection.viewportWidth, selection.viewportHeight].every(Number.isFinite) || selection.viewportWidth <= 0 || selection.viewportHeight <= 0) continue;
+            selectionGuest = guest;
+            const bounds = guest.getBoundingClientRect();
+            const rect = new DOMRect(bounds.x + selection.x * bounds.width / selection.viewportWidth, bounds.y + selection.y * bounds.height / selection.viewportHeight, selection.width * bounds.width / selection.viewportWidth, selection.height * bounds.height / selection.viewportHeight);
+            if (this.autoTimer) window.clearTimeout(this.autoTimer);
+            this.autoTimer = window.setTimeout(() => { if (!disposed && guest.isConnected) void this.translateSelectionToPopup(selection.text, rect); }, this.settings.debounceMs);
+          } catch { /* Guest can be navigating. Try again on the next tick. */ }
+        }
+      } finally { busy = false; }
+    };
+    this.registerInterval(window.setInterval(() => { void poll(); }, 300));
+    this.register(() => {
+      disposed = true;
+      for (const guest of guests()) if (HAS_TRANSLATOR) void guest.executeJavaScript(WEB_SELECTION_CLEANUP).catch(() => {});
+      seen.clear();
+    });
+    if (HAS_VIDEO) this.addCommand({
+      id: "connect-web-viewer-video", name: "Translate video subtitles from Web Viewer",
+      callback: () => { void this.connectWebViewerVideo(); }
+    });
+  }
+
+  private async connectWebViewerVideo() {
+    const active = this.app.workspace.getActiveViewOfType(View);
+    const guest = (active?.getViewType() === "webviewer" ? active.containerEl.querySelector<WebViewerElement>("webview") : undefined) ?? this.webViewer;
+    if (!guest?.isConnected) { new Notice("Open a video in Web Viewer first."); return; }
+    try {
+      new Notice("Reading Web Viewer video subtitles…");
+      const video = parseWebVideo(await guest.executeJavaScript(WEB_VIDEO_PROBE));
+      if (!video) { new Notice("No accessible video found. Videos in cross-origin frames are not supported."); return; }
+      const youtubeId = parseYouTubeVideoId(video.url);
+      let data: YouTubeVideoData = { videoId: `web:${hashString(video.url + JSON.stringify(video.segments))}`, title: video.title, sourceLanguage: video.sourceLanguage, segments: video.segments, webUrl: video.url };
+      if (!data.segments.length && youtubeId) {
+        data = { ...await this.fetchYouTubeWithYtDlp(youtubeId, this.settings.sourceLanguage), webUrl: video.url };
+      }
+      if (!data.segments.length) { new Notice("No readable subtitles yet. Enable captions on the website and try again. This site may use a custom subtitle format."); return; }
+      data.videoId = `web:${hashString(video.url + JSON.stringify(data.segments))}`;
+      // Confirm the guest still shows the same video after asynchronous extraction.
+      await guest.executeJavaScript(webVideoScript(video.token, "time"));
+      const leaf = this.app.workspace.getLeaf("split");
+      await leaf.setViewState({ type: YOUTUBE_VIEW_TYPE, active: true });
+      if (leaf.view instanceof YouTubeLearningView) {
+        leaf.view.loadWebVideo(data, {
+          time: async () => Number(await guest.executeJavaScript(webVideoScript(video.token, "time"))),
+          command: async (action, seconds) => { await guest.executeJavaScript(webVideoScript(video.token, action, seconds)); }
+        }, video.currentTime);
+        await this.app.workspace.revealLeaf(leaf);
+      }
+    } catch (error) { new Notice(`Could not read Web Viewer subtitles: ${getErrorMessage(error)}`); }
   }
 
   private registerVideoFeatures() {
@@ -1343,6 +1435,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
   private async collectVideoChatFrames(view: YouTubeLearningView, request: VideoChatRequest, signal: AbortSignal, progress: (text: string) => void): Promise<{ frames: VideoChatFrame[]; warning: string }> {
     const data = view.getVideoData();
     if (!data || request.visualMode === "none") return { frames: [], warning: "" };
+    if (data.webUrl) return { frames: [], warning: "Web Viewer frame capture is unavailable; answering from subtitles." };
     const times = frameSampleTimes(view.getDuration(), request.time, request.visualMode);
     const frames: VideoChatFrame[] = [];
     const errors: string[] = [];
@@ -1668,6 +1761,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
     const entry = this.settings.youtubeCache[videoId];
     if (!entry?.segments.length || entry.requestedSourceLanguage !== this.settings.sourceLanguage) return undefined;
     const data: YouTubeVideoData = {
+      webUrl: entry.webUrl,
       localPath: entry.localPath,
       embedAllowed: entry.embedAllowed,
       sourceLanguage: entry.sourceLanguage,
@@ -1689,6 +1783,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
     const segments = data.segments.map(({ duration, start, text }) => ({ duration, start, text }));
     const sameTranscript = old && hashString(JSON.stringify(old.segments)) === hashString(JSON.stringify(segments));
     this.settings.youtubeCache[data.videoId] = {
+      webUrl: data.webUrl,
       localPath: data.localPath,
       embedAllowed: data.embedAllowed,
       requestedSourceLanguage: this.settings.sourceLanguage,
@@ -1887,10 +1982,10 @@ export default class ContextualAIReaderPlugin extends Plugin {
     const translations = await this.translateItemsWithSharedMemory({
       contentType: "video-subtitles",
       document: {
-        domain: data.localPath ? "local-file" : "www.youtube.com",
+        domain: data.webUrl ? new URL(data.webUrl).hostname : data.localPath ? "local-file" : "www.youtube.com",
         id: data.videoId,
         title: data.title,
-        type: data.localPath ? "obsidian-local-video" : "obsidian-youtube",
+        type: data.webUrl ? "obsidian-web-video" : data.localPath ? "obsidian-local-video" : "obsidian-youtube",
         url: videoSourceUrl(data)
       },
       execute: async (missing, corpusGuidance) => {
@@ -1974,6 +2069,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
       new Notice("The YouTube player is not ready yet.");
       return;
     }
+    if (data.webUrl) { new Notice("Frame capture is not available for connected Web Viewer videos."); return; }
     const captureTime = view.getCurrentTime();
     try {
       let png: Buffer | undefined;
@@ -2261,8 +2357,9 @@ export default class ContextualAIReaderPlugin extends Plugin {
     const provider = this.getSharedMemoryProvider();
     for (const entry of Object.values(this.settings.youtubeCache)) {
       const data: YouTubeVideoData = {
+        webUrl: entry.webUrl,
         localPath: entry.localPath,
-      embedAllowed: entry.embedAllowed,
+        embedAllowed: entry.embedAllowed,
         sourceLanguage: entry.sourceLanguage,
         title: entry.title,
         videoId: entry.videoId,
@@ -2285,10 +2382,10 @@ export default class ContextualAIReaderPlugin extends Plugin {
         contentType: "video-subtitles",
         customPrompt: this.settings.customPrompt,
         document: {
-          domain: data.localPath ? "local-file" : "www.youtube.com",
+          domain: data.webUrl ? new URL(data.webUrl).hostname : data.localPath ? "local-file" : "www.youtube.com",
           id: data.videoId,
           title: data.title,
-          type: data.localPath ? "obsidian-local-video" : "obsidian-youtube",
+          type: data.webUrl ? "obsidian-web-video" : data.localPath ? "obsidian-local-video" : "obsidian-youtube",
           url: videoSourceUrl(data)
         },
         items,

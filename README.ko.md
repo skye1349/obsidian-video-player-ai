@@ -8,9 +8,19 @@ Obsidian에서 YouTube와 로컬 영상을 보고, 이중 언어 자막·스크�
 
 각 GIF는 한 가지 기능을 보여 줍니다. 영어 안내, 마우스 클릭 강조, 키보드 단축키 표시가 포함되어 있습니다.
 
-[**12개 기능 데모 보기**](docs/demos.md) · [전체 동영상 가이드](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+[**13개 기능 데모 보기**](docs/demos.md) · [전체 동영상 가이드](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
 
 ![사용 방법 살펴보기](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
+## Web Viewer 동영상 자막 번역
+
+**Web viewer**에서 동영상을 열고 사이트 자막을 켜세요. **Translate video subtitles from Web Viewer** 명령을 실행한 뒤 **Translate transcript with AI**를 누르세요. 영상은 원래 페이지에서 재생되고 옆 패널에는 도구 모음과 자막 목록만 표시됩니다. 자막 강조, 재생 제어 및 타임스탬프 이동이 동기화됩니다.
+
+![Web Viewer 동영상 자막 번역](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif)
+
+[MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.en.srt)
+
+접근 가능한 HTML5 텍스트 자막을 읽으며 YouTube는 yt-dlp도 사용할 수 있습니다. 영상 변경이나 동적 자막 갱신 시 다시 연결하세요. 교차 출처 플레이어, 전용 형식·영상에 삽입된 자막, 일반 웹 영상 음성 인식 및 화면 캡처는 지원하지 않습니다. AI 채팅은 추출한 자막을 사용할 수 있습니다.
 
 ## 주요 기능
 

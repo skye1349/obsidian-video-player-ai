@@ -8,9 +8,19 @@ ObsidianでYouTubeやローカル動画を視聴し、対訳字幕、スクリ�
 
 各 GIF で一つの機能を紹介します。英語の手順、クリック位置の強調、キーボード操作の表示が付いています。
 
-[**12 個の機能デモを見る**](docs/demos.md) · [動画ガイド全編](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+[**13 個の機能デモを見る**](docs/demos.md) · [動画ガイド全編](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
 
 ![使い方を動画で見る](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
+## Web Viewer の動画字幕を翻訳
+
+**Web viewer** で動画を開き、サイト側で字幕を有効にします。**Translate video subtitles from Web Viewer** を実行し、**Translate transcript with AI** をクリックします。動画は元のページで再生され、隣のパネルにはツールバーと字幕一覧だけが表示されます。同期ハイライト、再生操作、タイムスタンプによる移動に対応します。
+
+![Web Viewer の動画字幕を翻訳](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif)
+
+[MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.en.srt)
+
+HTML5 のテキスト字幕を読み取ります。YouTube では yt-dlp も利用できます。動画の変更や動的字幕の更新後は再接続してください。クロスオリジンのプレイヤー、独自形式・焼き込み字幕、一般のウェブ動画の音声認識や画像取得は未対応です。AI チャットには取得した字幕を利用できます。
 
 ## できること
 

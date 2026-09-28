@@ -8,9 +8,19 @@
 
 每个 GIF 演示一个功能，包含英文操作步骤、鼠标点击高亮和键盘快捷键提示。
 
-[**查看全部 12 个功能演示**](docs/demos.md) · [完整视频教程](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+[**查看全部 13 个功能演示**](docs/demos.md) · [完整视频教程](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
 
 ![功能演示](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
+## 翻译 Web Viewer 网页视频字幕
+
+在桌面版核心插件 **Web viewer** 中打开视频并启用网站字幕。运行 **Translate video subtitles from Web Viewer**，再点击 **Translate transcript with AI**。视频继续在原网页播放，旁边仅保留工具栏和字幕列表，支持同步高亮、播放控制及点击时间跳转。
+
+![翻译 Web Viewer 网页视频字幕](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif)
+
+[MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.en.srt)
+
+读取可访问的 HTML5 文本字幕；YouTube 可复用 yt-dlp 提取流程。切换视频或刷新动态字幕时请重新连接。暂不支持跨域播放器、自定义或画面内烧录字幕、普通网页视频语音转录及网页截图；AI 问答可使用已提取的字幕。
 
 ## 能做什么
 

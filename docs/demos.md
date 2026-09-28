@@ -6,6 +6,7 @@ Each GIF covers one feature. Read the two steps, then follow the highlighted con
 
 | Feature | Demonstration |
 | --- | --- |
+| Translate captions from Web Viewer | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif) |
 | Open a local video | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-local-video.gif) |
 | Choose embedded CC or a subtitle file | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/choose-subtitles.gif) |
 | Translate the transcript | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/translate-subtitles.gif) |
@@ -18,6 +19,21 @@ Each GIF covers one feature. Read the two steps, then follow the highlighted con
 | Open a YouTube video | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-youtube.gif) |
 | Jump to a moment and focus the player | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/focus-and-seek.gif) |
 | Choose your AI backend | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ai-backend.gif) |
+
+<details open>
+<summary>Translate captions from Web Viewer</summary>
+
+Open a video in the desktop **Web viewer** core plugin and enable captions on the website. Run **Translate video subtitles from Web Viewer**, then click **Translate transcript with AI**. The video stays on the original page; the adjacent panel shows only the toolbar and transcript, with synchronized highlighting, playback controls and clickable timestamps.
+
+![Translate captions from Web Viewer](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif)
+
+[Watch MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.en.srt)
+
+Reads accessible HTML5 text tracks; YouTube can use the existing yt-dlp fallback. Reconnect after switching videos or to refresh dynamic captions. Cross-origin players, proprietary or burned-in subtitles and generic web audio transcription are not supported. Web video frame capture is unavailable; AI chat can use the extracted captions.
+
+The Web Viewer demo records the released plugin in Obsidian using original sample material and actual translation results. It is silent; waiting time is shortened.
+
+</details>
 
 <details>
 <summary>Open a local video</summary>
