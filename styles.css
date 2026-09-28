@@ -1,0 +1,686 @@
+.contextual-ai-reader-popover {
+  position: absolute;
+  top: var(--ai-reader-popover-top, 0);
+  left: var(--ai-reader-popover-left, 0);
+  z-index: 1000;
+  box-sizing: border-box;
+  width: min(560px, calc(100vw - 24px));
+  max-height: min(320px, calc(100vh - 24px));
+  overflow: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary-alt);
+  box-shadow: var(--shadow-l);
+  color: var(--text-normal);
+  font-size: 16px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overscroll-behavior: contain;
+}
+
+.contextual-ai-reader-popover.is-hidden {
+  display: none;
+}
+
+.contextual-ai-reader-popover.is-loading {
+  padding: 10px 14px;
+}
+
+.contextual-ai-reader-popover.is-error {
+  border-color: var(--text-error);
+  color: var(--text-error);
+}
+
+.contextual-ai-reader-body {
+  user-select: text;
+}
+
+.contextual-ai-reader-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.contextual-ai-reader-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.contextual-ai-reader-button:hover {
+  color: var(--text-normal);
+}
+
+.contextual-ai-reader-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.contextual-ai-reader-vocab {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contextual-ai-reader-vocab-word {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-normal);
+}
+
+.contextual-ai-reader-vocab-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.contextual-ai-reader-vocab-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.contextual-ai-reader-vocab-text {
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.contextual-ai-reader-vocab-status {
+  color: var(--text-accent);
+  font-size: 12px;
+}
+
+.contextual-ai-reader-usage {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.contextual-ai-reader-settings-textarea {
+  min-width: 360px;
+  min-height: 120px;
+}
+
+.contextual-ai-reader-batch-description {
+  margin-top: 0;
+  color: var(--text-muted);
+}
+
+.contextual-ai-reader-batch-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 180px;
+  resize: vertical;
+  font-family: var(--font-monospace);
+}
+
+.contextual-ai-reader-batch-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* Translation progress overlay */
+.ai-reader-overlay {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: min(480px, calc(100vw - 32px));
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  animation: codex-overlay-in 0.15s ease;
+}
+
+@keyframes codex-overlay-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.ai-reader-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  flex-wrap: wrap;
+}
+
+.ai-reader-overlay-spinner {
+  color: var(--text-accent);
+  font-size: 14px;
+  animation: codex-spin 1.2s linear infinite;
+  display: inline-block;
+}
+
+@keyframes codex-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.ai-reader-overlay-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.ai-reader-overlay-stop {
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ai-reader-overlay-stop:hover {
+  opacity: 0.85;
+}
+
+.ai-reader-overlay-text {
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-normal);
+  min-height: 48px;
+  max-height: 160px;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Popup loading state ── */
+.ai-reader-status-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.ai-reader-spin {
+  color: var(--text-accent);
+  font-size: 13px;
+  display: inline-block;
+  animation: codex-spin 1.2s linear infinite;
+}
+
+.ai-reader-status-label {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-reader-popup-tokens,
+.ai-reader-overlay-tokens {
+  font-size: 11px;
+  color: var(--text-accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ai-reader-stream-body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 1.6em;
+}
+
+/* YouTube learning player */
+.contextual-ai-reader-youtube-view {
+  container-type: inline-size;
+}
+
+.contextual-ai-reader-youtube-view .view-content {
+  padding: 0;
+  overflow: hidden;
+}
+
+.youtube-reader-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, var(--youtube-reader-main-width, 68.75%)) 8px minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--background-primary);
+}
+
+.youtube-reader-main {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.youtube-reader-resizer {
+  position: relative;
+  z-index: 3;
+  width: 8px;
+  min-width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+  background: var(--background-primary);
+}
+
+.youtube-reader-resizer::after {
+  position: absolute;
+  inset: 0 3px;
+  background: var(--background-modifier-border);
+  content: "";
+  transition: background-color 120ms ease, inset 120ms ease;
+}
+
+.youtube-reader-resizer:hover::after,
+.youtube-reader-resizer:focus-visible::after,
+.youtube-reader-shell.is-resizing .youtube-reader-resizer::after {
+  inset: 0 2px;
+  background: var(--interactive-accent);
+}
+
+.youtube-reader-shell.is-resizing,
+.youtube-reader-shell.is-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+.youtube-reader-shell.is-resizing::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  content: "";
+}
+
+.youtube-reader-toolbar {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  min-height: 44px;
+  gap: 4px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+}
+
+.youtube-reader-title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--text-normal);
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.youtube-reader-tool {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+}
+
+.youtube-reader-player {
+  position: relative;
+  min-width: 0;
+  min-height: 240px;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background: #000;
+}
+
+.youtube-reader-player video,
+.youtube-reader-player iframe,
+.youtube-reader-player webview {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.youtube-reader-player.is-windowed-fullscreen {
+  position: absolute !important;
+  z-index: 4;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  background: #000;
+}
+
+.youtube-reader-video-subtitles {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0 6% 9%;
+  pointer-events: none;
+  background: transparent;
+  opacity: 0;
+  text-align: center;
+}
+
+.youtube-reader-video-subtitles.has-caption {
+  opacity: 1;
+}
+
+.youtube-reader-video-subtitles.is-position-pending,
+.youtube-reader-video-subtitles.is-video-offscreen,
+.youtube-reader-video-subtitles-hidden .youtube-reader-video-subtitles {
+  display: none;
+}
+
+.youtube-reader-video-subtitle-original,
+.youtube-reader-video-subtitle-translation {
+  max-width: min(92%, 1200px);
+  border: 0;
+  background: transparent;
+  color: var(--youtube-reader-original-subtitle-color, #111);
+  font-family: var(--font-interface);
+  font-size: var(--youtube-reader-original-subtitle-size, 16px);
+  font-weight: 750;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-shadow:
+    -1px -1px 0 rgba(255, 255, 255, 0.96),
+    1px -1px 0 rgba(255, 255, 255, 0.96),
+    -1px 1px 0 rgba(255, 255, 255, 0.96),
+    1px 1px 0 rgba(255, 255, 255, 0.96),
+    0 2px 6px rgba(255, 255, 255, 0.72);
+}
+
+.youtube-reader-video-subtitle-translation {
+  display: none;
+  margin-top: 6px;
+  color: var(--youtube-reader-translation-subtitle-color, #111);
+  font-size: var(--youtube-reader-translation-subtitle-size, 15px);
+  font-weight: 700;
+}
+
+.youtube-reader-video-subtitles.has-translation .youtube-reader-video-subtitle-translation {
+  display: block;
+}
+
+.youtube-reader-windowed-fullscreen-capture,
+.youtube-reader-windowed-fullscreen-exit {
+  position: absolute;
+  z-index: 5;
+  top: 18px;
+  right: 18px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(18, 18, 18, 0.62);
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+
+.youtube-reader-windowed-fullscreen-capture {
+  right: 66px;
+}
+
+.youtube-reader-player.is-windowed-fullscreen .youtube-reader-windowed-fullscreen-capture,
+.youtube-reader-player.is-windowed-fullscreen .youtube-reader-windowed-fullscreen-exit {
+  display: flex;
+}
+
+.youtube-reader-status {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 8px 12px;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.youtube-reader-status.is-error {
+  color: var(--text-error);
+}
+
+.youtube-reader-transcript-pane {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  background: var(--background-primary-alt);
+}
+
+.youtube-reader-transcript-header {
+  display: flex;
+  align-items: center;
+  flex: 0 0 44px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.youtube-reader-transcript-header span {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.youtube-reader-transcript {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 8px 0 40px;
+  scroll-behavior: smooth;
+}
+
+.youtube-reader-segment {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px 14px;
+  border-left: 3px solid transparent;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.youtube-reader-segment:hover {
+  background: var(--background-modifier-hover);
+}
+
+.youtube-reader-segment.is-active {
+  border-left-color: var(--interactive-accent);
+  background: var(--background-modifier-active-hover);
+}
+
+.youtube-reader-time {
+  align-self: start;
+  min-width: 0;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-accent);
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  text-align: left;
+}
+
+.youtube-reader-time:hover {
+  background: transparent;
+  color: var(--text-accent-hover);
+}
+
+.youtube-reader-segment-content {
+  min-width: 0;
+}
+
+.youtube-reader-original,
+.youtube-reader-translation {
+  cursor: text;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+  line-height: 1.55;
+  user-select: text;
+}
+
+.youtube-reader-original {
+  color: var(--text-normal);
+  font-size: 14px;
+}
+
+.youtube-reader-translation {
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.youtube-reader-translations-hidden .youtube-reader-translation {
+  display: none;
+}
+
+.youtube-reader-segment.is-active .youtube-reader-original {
+  color: var(--text-accent);
+}
+
+.youtube-reader-empty,
+.youtube-reader-transcript-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.youtube-reader-empty h3 {
+  margin: 0 0 8px;
+  color: var(--text-normal);
+  font-size: 18px;
+}
+
+.youtube-reader-empty p {
+  max-width: 440px;
+  margin: 0;
+}
+
+@container (max-width: 720px) {
+  .youtube-reader-shell {
+    grid-template-rows: minmax(280px, 56%) minmax(220px, 44%);
+    grid-template-columns: 1fr;
+  }
+
+  .youtube-reader-resizer {
+    display: none;
+  }
+
+  .youtube-reader-main {
+    border-right: 0;
+    border-bottom: 1px solid var(--background-modifier-border);
+  }
+}
+
+/* Stop button (popup + overlay) */
+.contextual-ai-reader-stop-btn,
+.ai-reader-overlay-stop {
+  flex-shrink: 0;
+  padding: 2px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+  border: none;
+  cursor: pointer;
+}
+
+.contextual-ai-reader-stop-btn:hover,
+.ai-reader-overlay-stop:hover {
+  opacity: 0.85;
+}
+
+.contextual-ai-reader-refine-btn {
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  cursor: pointer;
+}
+
+.contextual-ai-reader-refine-btn:hover {
+  opacity: 0.85;
+}
+
+.youtube-reader-player video { object-fit: contain; background: #000; }
+.youtube-reader-toolbar select { max-width: 220px; }
+
+.youtube-reader-local-player .youtube-reader-video-subtitles { padding-bottom: max(68px, 9%); }
+
+/* Video-aware AI conversation, shared by local media and YouTube. */
+.video-chat-panel { display: flex; flex: 1 1 auto; min-height: 0; min-width: 0; flex-direction: column; overflow: hidden; }
+.video-chat-panel.is-hidden, .video-chat-transcript-hidden { display: none !important; }
+.youtube-reader-transcript-header { flex-wrap: wrap; flex: 0 0 auto; min-height: 44px; padding: 6px 10px; gap: 6px; }
+.video-chat-open { margin-left: auto; }
+.video-chat-tab { box-shadow: none; background: transparent; padding: 4px; }
+.video-chat-info { padding: 12px 14px 4px; font-size: 12px; color: var(--text-muted); }
+.video-chat-info strong { display: block; color: var(--text-normal); font-size: 15px; margin-bottom: 4px; }
+.video-chat-info p { margin: 6px 0; line-height: 1.4; }
+.video-chat-quick-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 12px 10px; }
+.video-chat-quick-actions button, .video-chat-actions button { font-size: 12px; }
+.video-chat-messages { flex: 1 1 auto; min-height: 80px; overflow: auto; padding: 8px 12px; overscroll-behavior: contain; }
+.video-chat-empty { padding: 24px 8px; text-align: center; color: var(--text-muted); font-size: 13px; }
+.video-chat-message { padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--background-modifier-border); background: var(--background-primary); overflow-wrap: anywhere; }
+.video-chat-message.is-user { background: var(--background-secondary); }
+.video-chat-message-label { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-muted); gap: 8px; margin-bottom: 8px; }
+.video-chat-message-label button { font-size: 11px; height: 23px; padding: 2px 6px; }
+.video-chat-message-body { font-size: 14px; line-height: 1.6; user-select: text; }
+.video-chat-message-body.is-plain-text { white-space: pre-wrap; }
+.video-chat-message-body > :first-child { margin-top: 0; }
+.video-chat-message-body > :last-child { margin-bottom: 0; }
+.video-chat-message-body pre { overflow-x: auto; }
+.video-chat-message-context { font-size: 11px; color: var(--text-muted); margin-top: 10px; }
+.video-chat-status { padding: 6px 14px; color: var(--text-muted); font-size: 12px; max-height: 80px; overflow: auto; overflow-wrap: anywhere; }
+.video-chat-panel.is-busy .video-chat-status { color: var(--text-accent); }
+.video-chat-composer { padding: 10px 12px; border-top: 1px solid var(--background-modifier-border); background: var(--background-primary); }
+.video-chat-options { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+.video-chat-options select { max-width: 100%; min-width: 0; flex: 1; font-size: 12px; }
+.video-chat-composer textarea { width: 100%; min-height: 72px; max-height: 180px; resize: vertical; font-size: 14px; }
+.video-chat-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.video-chat-hint { font-size: 10px; color: var(--text-faint); margin-top: 8px; }
