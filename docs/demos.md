@@ -1,27 +1,14 @@
-# Video Player (AI integrated): feature demos
+# Video Player: feature walkthroughs
 
-[Watch the full video](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.en.srt)
+Choose a feature below to expand its short GIF and instructions. Each demo covers the named feature.
 
-Each GIF covers one feature. Read the two steps, then follow the highlighted control. **Cmd/Ctrl** means Command on macOS and Ctrl on Windows/Linux. The GIFs are silent, loop automatically, and shorten AI waiting time.
+[Watch and organize](#watch-and-organize) · [Read and translate captions](#read-and-translate-captions) · [Ask AI](#ask-ai) · [Keep notes](#keep-notes)
 
-| Feature | Demonstration |
-| --- | --- |
-| Organize local playlists and track progress | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.gif) |
-| Translate captions from Web Viewer | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif) |
-| Open a local video | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-local-video.gif) |
-| Choose embedded CC or a subtitle file | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/choose-subtitles.gif) |
-| Translate the transcript | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/translate-subtitles.gif) |
-| Save captions as a note | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/transcript-note.gif) |
-| Capture a frame for your notes | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif) |
-| Ask AI and continue the conversation | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ask-ai.gif) |
-| Save just one AI answer | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/save-answer.gif) |
-| Append new chat messages to a note | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/save-chat.gif) |
-| Choose the chat note destination | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/chat-destination.gif) |
-| Open a YouTube video | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-youtube.gif) |
-| Jump to a moment and focus the player | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/focus-and-seek.gif) |
-| Choose your AI backend | [Open GIF](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ai-backend.gif) |
+The recordings use English instructions and highlighted clicks. **Cmd/Ctrl** means Command on macOS and Ctrl on Windows/Linux. [Demo notes and requirements](#before-you-start).
 
-<details open>
+### Watch and organize
+
+<details>
 <summary>Organize local playlists and track progress</summary>
 
 1. Click **Add playlist** and select a folder. Subfolders become chapters.
@@ -31,22 +18,9 @@ Each GIF covers one feature. Read the two steps, then follow the highlighted con
 
 [Watch MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.en.srt)
 
-Recorded in Obsidian with original sample videos. All shown playlist actions and playback progress are real.
+Your videos stay in their original folder. **Rescan** adds new files while preserving progress; **Locate folder** reconnects a moved folder. **Mark as unwatched** resets selected lessons. You can also reorder videos within a chapter and keep a note for each video.
 
-</details>
-
-<details>
-<summary>Translate captions from Web Viewer</summary>
-
-Open a video in the desktop **Web viewer** core plugin and enable captions on the website. Run **Translate video subtitles from Web Viewer**, then click **Translate transcript with AI**. The video stays on the original page; the adjacent panel shows only the toolbar and transcript, with synchronized highlighting, playback controls and clickable timestamps.
-
-![Translate captions from Web Viewer](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif)
-
-[Watch MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.en.srt)
-
-Reads accessible HTML5 text tracks; YouTube can use the existing yt-dlp fallback. Reconnect after switching videos or to refresh dynamic captions. Cross-origin players, proprietary or burned-in subtitles and generic web audio transcription are not supported. Web video frame capture is unavailable; AI chat can use the extracted captions.
-
-The Web Viewer demo records the released plugin in Obsidian using original sample material and actual translation results. It is silent; waiting time is shortened.
+Duration scanning uses local **ffprobe**, configurable under **Duration settings**. Unknown durations can be filled in during playback. Playlist data is stored separately from AI settings in `video-library.json`. No AI account is needed for playlists or basic playback.
 
 </details>
 
@@ -59,6 +33,28 @@ The Web Viewer demo records the released plugin in Obsidian using original sampl
 ![Open a local video](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-local-video.gif)
 
 </details>
+
+<details>
+<summary>Open a YouTube video</summary>
+
+1. Press Cmd/Ctrl + P and run Open YouTube video.
+2. Paste the video link and click Open. Available captions load beside it.
+
+![Open a YouTube video](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-youtube.gif)
+
+</details>
+
+<details>
+<summary>Jump to a moment and focus the player</summary>
+
+1. Click a transcript timestamp to jump to that moment.
+2. Click the expand icon for windowed fullscreen.
+
+![Jump to a moment and focus the player](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/focus-and-seek.gif)
+
+</details>
+
+### Read and translate captions
 
 <details>
 <summary>Choose embedded CC or a subtitle file</summary>
@@ -81,6 +77,45 @@ The Web Viewer demo records the released plugin in Obsidian using original sampl
 </details>
 
 <details>
+<summary>Translate captions from Web Viewer</summary>
+
+Open a video in the desktop **Web viewer** core plugin and enable captions on the website. Run **Translate video subtitles from Web Viewer**, then click **Translate transcript with AI**. The video stays on the original page; the adjacent panel shows only the toolbar and transcript, with synchronized highlighting, playback controls and clickable timestamps.
+
+![Translate captions from Web Viewer](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.gif)
+
+[Watch MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.1.0/web-viewer-subtitles.en.srt)
+
+Reads accessible HTML5 text tracks; YouTube can use the existing yt-dlp fallback. Reconnect after switching videos or to refresh dynamic captions. Cross-origin players, proprietary or burned-in subtitles and generic web audio transcription are not supported. Web video frame capture is unavailable; AI chat can use the extracted captions.
+
+The Web Viewer demo records the released plugin in Obsidian using original sample material and actual translation results. It is silent; waiting time is shortened.
+
+</details>
+
+### Ask AI
+
+<details>
+<summary>Ask AI and continue the conversation</summary>
+
+1. Click AI help at the top right; choose the video evidence.
+2. Type a question and click Send. Follow-up questions keep context.
+
+![Ask AI and continue the conversation](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ask-ai.gif)
+
+</details>
+
+<details>
+<summary>Choose your AI backend</summary>
+
+1. Open the plugin settings and click AI backend.
+2. Choose Codex, Claude Code, OpenAI-compatible API, or Anthropic.
+
+![Choose your AI backend](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ai-backend.gif)
+
+</details>
+
+### Keep notes
+
+<details>
 <summary>Save captions as a note</summary>
 
 1. Click Create transcript note (the document icon).
@@ -97,16 +132,6 @@ The Web Viewer demo records the released plugin in Obsidian using original sampl
 2. Click the camera icon to save a clean frame with a timestamp.
 
 ![Capture a frame for your notes](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
-
-</details>
-
-<details>
-<summary>Ask AI and continue the conversation</summary>
-
-1. Click AI help at the top right; choose the video evidence.
-2. Type a question and click Send. Follow-up questions keep context.
-
-![Ask AI and continue the conversation](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ask-ai.gif)
 
 </details>
 
@@ -140,36 +165,6 @@ The Web Viewer demo records the released plugin in Obsidian using original sampl
 
 </details>
 
-<details>
-<summary>Open a YouTube video</summary>
-
-1. Press Cmd/Ctrl + P and run Open YouTube video.
-2. Paste the video link and click Open. Available captions load beside it.
-
-![Open a YouTube video](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/open-youtube.gif)
-
-</details>
-
-<details>
-<summary>Jump to a moment and focus the player</summary>
-
-1. Click a transcript timestamp to jump to that moment.
-2. Click the expand icon for windowed fullscreen.
-
-![Jump to a moment and focus the player](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/focus-and-seek.gif)
-
-</details>
-
-<details>
-<summary>Choose your AI backend</summary>
-
-1. Open the plugin settings and click AI backend.
-2. Choose Codex, Claude Code, OpenAI-compatible API, or Anthropic.
-
-![Choose your AI backend](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/ai-backend.gif)
-
-</details>
-
 ## Before you start
 
 Choose the AI backend separately in each plugin. For Codex or Claude Code, install and sign in first. For an API, use your own provider key and test the connection. The recording shows API setup without a key; it does not depict a live API request. Automatic · Economy chooses a supported lightweight model and caches its choice.
@@ -177,3 +172,9 @@ Choose the AI backend separately in each plugin. For Codex or Claude Code, insta
 Local CC extraction and clean frame capture need ffmpeg / ffprobe. YouTube fallback extraction uses yt-dlp. Videos without captions need a configured audio transcription service; paid transcription is not demonstrated here.
 
 The YouTube example shows NASA Space Place, [What Is a Solar Eclipse?](https://www.youtube.com/watch?v=hyf5JF_VxwM). No endorsement is implied. The local lesson was created for this demo.
+
+## Archived recording
+
+[Version 1.0 video compilation](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.en.srt)
+
+This historical recording covers the original version 1.0 features. It does **not** include Web Viewer captions or local playlists. Use the individual demos above for those features.
