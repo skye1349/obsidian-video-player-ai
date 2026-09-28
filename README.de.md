@@ -4,6 +4,14 @@ Sieh YouTube und lokale Videos in Obsidian an, lerne mit zweisprachigen Untertit
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## So funktioniert es
+
+Jedes GIF zeigt eine Funktion mit englischen Anweisungen, hervorgehobenen Mausklicks und Tastenkürzeln.
+
+[**Alle 12 Funktionsdemos**](docs/demos.md) · [Vollständige Videoanleitung](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+
+![So funktioniert es](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
 ## Was du damit machen kannst
 
 - YouTube und lokale Videos in Obsidian abspielen.

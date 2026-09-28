@@ -4,6 +4,14 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## 功能演示
+
+每个 GIF 演示一个功能，包含英文操作步骤、鼠标点击高亮和键盘快捷键提示。
+
+[**查看全部 12 个功能演示**](docs/demos.md) · [完整视频教程](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+
+![功能演示](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
 ## 能做什么
 
 - 在 Obsidian 内播放 YouTube 和本地视频。

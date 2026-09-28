@@ -4,6 +4,14 @@ Obsidian에서 YouTube와 로컬 영상을 보고, 이중 언어 자막·스크�
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## 사용 방법 살펴보기
+
+각 GIF는 한 가지 기능을 보여 줍니다. 영어 안내, 마우스 클릭 강조, 키보드 단축키 표시가 포함되어 있습니다.
+
+[**12개 기능 데모 보기**](docs/demos.md) · [전체 동영상 가이드](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/video-player-guide.mp4)
+
+![사용 방법 살펴보기](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.0.0/capture-frame.gif)
+
 ## 주요 기능
 
 - Obsidian에서 YouTube와 로컬 영상을 재생합니다.
