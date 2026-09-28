@@ -1,3 +1,4 @@
+import { buildClaudeArgs } from "./claude-args";
 import { VIDEO_YOUTUBE_PROTOCOL, VIDEO_LOCAL_PROTOCOL } from "./product";
 import { EconomyModels, selectionMode, type ModelSelection } from "./economy-model";
 import { HAS_TRANSLATOR, HAS_VIDEO, PRODUCT, PRODUCT_NAME, translatorSettings } from "./product";
@@ -17,7 +18,7 @@ import {
   Plugin,
   PluginSettingTab,
   requestUrl,
-  Setting,
+  type SettingDefinitionItem,
   TFile,
   TFolder,
   WorkspaceLeaf,
@@ -2356,11 +2357,10 @@ export default class ContextualAIReaderPlugin extends Plugin {
   private async runClaudePrompt(prompt: string, _onChunk?: (text: string) => void, selectedModel?: string): Promise<string> {
     const command = resolveClaudeCommand(this.settings.claudeCommand);
     const model = selectedModel || this.settings.claudeModel || DEFAULT_SETTINGS.claudeModel;
-    // --no-session-persistence: prevents loading project CLAUDE.md/memory (saves ~80k tokens and ~10-20s per call).
-    // --output-format json: gives token usage info.
-    const args = ["--print", "--no-session-persistence", "--output-format", "json", "--model", model];
+    const args = buildClaudeArgs(model);
+    const directory = await mkdtemp(join(tmpdir(), "obsidian-translation-"));
 
-    const handle = spawnProcess(command, args, prompt, this.settings.timeoutSeconds * 1000);
+    const handle = spawnProcess(command, args, prompt, this.settings.timeoutSeconds * 1000, undefined, { cwd: directory });
     this.currentKills.add(handle.kill);
 
     try {
@@ -2388,6 +2388,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
       }
     } finally {
       this.currentKills.delete(handle.kill);
+      await rm(directory, { recursive: true, force: true });
     }
   }
 
@@ -2933,20 +2934,20 @@ export default class ContextualAIReaderPlugin extends Plugin {
     popup.classList.remove("is-error");
     popup.classList.add("is-loading");
 
-    const statusRow = activeDocument.createElement("div");
+    const statusRow = activeWindow.createDiv();
     statusRow.className = "ai-reader-status-row";
 
-    const spinner = activeDocument.createElement("span");
+    const spinner = activeWindow.createSpan();
     spinner.className = "ai-reader-spin";
     spinner.setText("⟳");
     statusRow.appendChild(spinner);
 
-    const label = activeDocument.createElement("span");
+    const label = activeWindow.createSpan();
     label.className = "ai-reader-status-label";
     label.setText(`${backendLabel} · 0s`);
     statusRow.appendChild(label);
 
-    const stopBtn = activeDocument.createElement("button");
+    const stopBtn = activeWindow.createEl("button");
     stopBtn.type = "button";
     stopBtn.className = "contextual-ai-reader-stop-btn";
     stopBtn.setText("■ Stop");
@@ -2956,7 +2957,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
 
     popup.appendChild(statusRow);
 
-    const streamBody = activeDocument.createElement("div");
+    const streamBody = activeWindow.createDiv();
     streamBody.className = "ai-reader-stream-body";
     popup.appendChild(streamBody);
 
@@ -3015,7 +3016,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
     popup.classList.toggle("is-loading", card.status === "loading");
     popup.classList.toggle("is-error", card.status === "error");
 
-    const body = activeDocument.createElement("div");
+    const body = activeWindow.createDiv();
     body.className = "contextual-ai-reader-vocab";
 
     const wordEl = body.createDiv("contextual-ai-reader-vocab-word");
@@ -3050,7 +3051,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
 
     popup.appendChild(body);
 
-    const actions = activeDocument.createElement("div");
+    const actions = activeWindow.createDiv();
     actions.className = "contextual-ai-reader-actions";
 
     actions.appendChild(this.createIconButton("volume-2", "Read selected word", () => {
@@ -3102,19 +3103,19 @@ export default class ContextualAIReaderPlugin extends Plugin {
     popup.classList.toggle("is-loading", state === "loading");
     popup.classList.toggle("is-error", state === "error");
 
-    const body = activeDocument.createElement("div");
+    const body = activeWindow.createDiv();
     body.className = "contextual-ai-reader-body";
     body.setText(text);
     popup.appendChild(body);
 
     if (tokenUsage && hasTokenUsage(tokenUsage)) {
-      const usageEl = activeDocument.createElement("div");
+      const usageEl = activeWindow.createDiv();
       usageEl.className = "contextual-ai-reader-usage";
       usageEl.setText(`Token usage: ${formatTokenUsage(tokenUsage)}`);
       popup.appendChild(usageEl);
     }
 
-    const actions = activeDocument.createElement("div");
+    const actions = activeWindow.createDiv();
     actions.className = "contextual-ai-reader-actions";
 
     actions.appendChild(this.createIconButton("volume-2", "Read original text", () => {
@@ -3223,7 +3224,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
   }
 
   private createIconButton(icon: string, label: string, onClick: () => void): HTMLButtonElement {
-    const button = activeDocument.createElement("button");
+    const button = activeWindow.createEl("button");
     button.type = "button";
     button.className = "contextual-ai-reader-button";
     button.ariaLabel = label;
@@ -3247,7 +3248,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
       return this.popupEl;
     }
 
-    const popup = activeDocument.createElement("div");
+    const popup = activeWindow.createDiv();
     popup.className = "contextual-ai-reader-popover";
     popup.addClass("is-hidden");
     popup.addEventListener("wheel", (event: WheelEvent) => event.stopPropagation(), { passive: true });
@@ -3468,12 +3469,12 @@ class BatchScopeModal extends Modal {
       : "Batch translate: interleave target-language paragraphs");
     this.contentEl.empty();
 
-    const description = activeDocument.createElement("p");
+    const description = activeWindow.createEl("p");
     description.className = "contextual-ai-reader-batch-description";
     description.setText("Enter one Markdown file, folder, or wildcard per line. This command writes directly to the matched files.");
     this.contentEl.appendChild(description);
 
-    const textarea = activeDocument.createElement("textarea");
+    const textarea = activeWindow.createEl("textarea");
     textarea.className = "contextual-ai-reader-batch-input";
     textarea.placeholder = [
       "Books/Example Book/",
@@ -3483,17 +3484,17 @@ class BatchScopeModal extends Modal {
     ].join("\n");
     this.contentEl.appendChild(textarea);
 
-    const actions = activeDocument.createElement("div");
+    const actions = activeWindow.createDiv();
     actions.className = "contextual-ai-reader-batch-actions";
 
-    const cancelButton = activeDocument.createElement("button");
+    const cancelButton = activeWindow.createEl("button");
     cancelButton.type = "button";
     cancelButton.setText("Cancel");
     cancelButton.addEventListener("click", () => {
       this.close();
     });
 
-    const startButton = activeDocument.createElement("button");
+    const startButton = activeWindow.createEl("button");
     startButton.type = "button";
     startButton.className = "mod-cta";
     startButton.setText("Start");
@@ -3525,29 +3526,27 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
-  display(): void {
-    const { containerEl } = this;
-    containerEl.empty();
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    const definitions: SettingDefinitionItem[] = [];
     const modifierLabel = getPrimaryModifierLabel();
-    new Setting(containerEl)
-      .setName("Model selection / 模型选择")
-      .setDesc("Automatic economy prefers supported lightweight models for text and images; never upgrades to premium. Manual preserves the model IDs below. 自动选择经济型，不自动升级高价模型。")
+    definitions.push({ name: "Model selection / 模型选择", desc: "Automatic economy prefers supported lightweight models for text and images; never upgrades to premium. Manual preserves the model IDs below. 自动选择经济型，不自动升级高价模型。",
+      render: (setting) => { setting
       .addDropdown(dropdown => dropdown.addOption("economy", "Automatic · Economy / 自动选择 · 经济型")
         .addOption("manual", "Manual / 手动指定").setValue(this.plugin.settings.modelSelection)
-        .onChange(async value => { this.plugin.settings.modelSelection = value as ModelSelection; this.plugin.selectedEconomyModel = ""; await this.plugin.saveSettings(); this.display(); }));
+        .onChange(async value => { this.plugin.settings.modelSelection = value as ModelSelection; this.plugin.selectedEconomyModel = ""; await this.plugin.saveSettings(); this.update(); })); }
+    });
     if (this.plugin.settings.modelSelection === "economy") {
-      containerEl.createEl("p", { text: this.plugin.selectedEconomyModel
+      definitions.push({ name: "Current model", desc: this.plugin.selectedEconomyModel
         ? `Automatic · Current model: ${this.plugin.selectedEconomyModel}. Model IDs below apply only in Manual mode.`
         : "Automatic · Model will be selected on the first request. Model IDs below apply only in Manual mode." });
     }
 
-    if (PRODUCT !== "combined") containerEl.createEl("p", { text: HAS_VIDEO
+    if (PRODUCT !== "combined") definitions.push({ name: "About", desc: HAS_VIDEO
       ? "Play videos, work with subtitles, capture notes, and ask AI about what you watch. Text and document translation is available in AI Translation Assistant."
       : "Translate selected text and documents, understand vocabulary, and save bilingual notes. Video tools are available in Video Player (AI integrated)." });
 
-    new Setting(containerEl)
-      .setName("AI backend")
-      .setDesc("Auto uses a configured API key first (OpenAI-compatible, then Anthropic), otherwise local Codex or Claude. Select an explicit backend to choose a particular provider.")
+    definitions.push({ name: "AI backend", desc: "Auto uses a configured API key first (OpenAI-compatible, then Anthropic), otherwise local Codex or Claude. Select an explicit backend to choose a particular provider.",
+      render: (setting) => { setting
       .addDropdown((dropdown) =>
         dropdown
           .addOption("auto", "Auto (API key, then local CLI)")
@@ -3560,49 +3559,54 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.aiBackend = value as AIBackend;
             this.plugin.selectedEconomyModel = "";
             await this.plugin.saveSettings();
-            this.display();
+            this.update();
           })
-      );
+      ); }
+    });
 
     if (["openai", "anthropic"].includes(this.plugin.settings.aiBackend)) {
-      const result = containerEl.createDiv({ attr: { role: "status" } });
+      let result: HTMLElement;
       const check = async (images: boolean, button: { setDisabled: (value: boolean) => unknown }) => {
         button.setDisabled(true); result.setText("Testing the configured API…");
         try { result.setText(await this.plugin.testApiConnection(images)); }
         catch (error) { result.setText(error instanceof Error ? error.message : String(error)); }
         finally { button.setDisabled(false); }
       };
-      new Setting(containerEl).setName("Test API connection")
-        .setDesc("Sends a small test request to your configured provider. The image test uses a synthetic image, not your notes or videos. Provider charges may apply.")
+      definitions.push({ name: "Test API connection", desc: "Sends a small test request to your configured provider. The image test uses a synthetic image, not your notes or videos. Provider charges may apply.",
+      render: (setting) => {
+        result = setting.descEl.createDiv({ attr: { role: "status" } });
+        setting
         .addButton((button) => button.setButtonText("Test text").onClick(() => { void check(false, button); }))
-        .addButton((button) => button.setButtonText("Test image").onClick(() => { void check(true, button); }));
+        .addButton((button) => button.setButtonText("Test image").onClick(() => { void check(true, button); })); }
+    });
     }
 
     if (HAS_VIDEO) {
-    new Setting(containerEl).setName("Chat note folder")
-      .setDesc("Folder inside this vault. Leave empty to save at the vault root. New save destinations use this folder.")
+    definitions.push({ name: "Chat note folder", desc: "Folder inside this vault. Leave empty to save at the vault root. New save destinations use this folder.",
+      render: (setting) => { setting
       .addText((text) => text.setValue(this.plugin.settings.videoChatNoteFolder).onChange(async (value) => {
         this.plugin.settings.videoChatNoteFolder = value.trim(); await this.plugin.saveSettings();
-      }));
-    new Setting(containerEl).setName("Chat note filename")
-      .setDesc("Use {video} for one note per video, or an existing filename to append there. Repeated saves add only new messages. Save answer appends only the selected AI response.")
+      })); }
+    });
+    definitions.push({ name: "Chat note filename", desc: "Use {video} for one note per video, or an existing filename to append there. Repeated saves add only new messages. Save answer appends only the selected AI response.",
+      render: (setting) => { setting
       .addText((text) => text.setPlaceholder("{video} AI Chat.md").setValue(this.plugin.settings.videoChatNoteFilename).onChange(async (value) => {
         this.plugin.settings.videoChatNoteFilename = value.trim() || DEFAULT_SETTINGS.videoChatNoteFilename; await this.plugin.saveSettings();
-      }));
+      })); }
+    });
 
-    new Setting(containerEl)
-      .setName("Video chat Codex model")
-      .setDesc("Optional model override for video chat only. Leave empty to use the translation model. Choose a model available to your Codex account that accepts images.")
+    definitions.push({ name: "Video chat Codex model", desc: "Optional model override for video chat only. Leave empty to use the translation model. Choose a model available to your Codex account that accepts images.",
+      render: (setting) => { setting
       .addText((text) => text.setPlaceholder("Use translation model")
         .setValue(this.plugin.settings.videoChatCodexModel)
-        .onChange(async (value) => { this.plugin.settings.videoChatCodexModel = value.trim(); await this.plugin.saveSettings(); }));
+        .onChange(async (value) => { this.plugin.settings.videoChatCodexModel = value.trim(); await this.plugin.saveSettings(); })); }
+    });
 
     }
 
     if (PRIVATE_SHARED_MEMORY_BUILD) {
-      new Setting(containerEl)
-        .setName("Private shared translation memory")
-        .setDesc("Reuse this Mac's CC Live Translator SQLite memory. A miss still uses the selected AI backend.")
+      definitions.push({ name: "Private shared translation memory", desc: "Reuse this Mac's CC Live Translator SQLite memory. A miss still uses the selected AI backend.",
+      render: (setting) => { setting
         .addToggle((toggle) =>
           toggle
             .setValue(this.plugin.settings.sharedMemoryEnabled)
@@ -3610,7 +3614,7 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.sharedMemoryEnabled = value;
               this.plugin.configureSharedMemory();
               await this.plugin.saveSettings();
-              this.display();
+              this.update();
             })
         )
         .addButton((button) =>
@@ -3619,12 +3623,12 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             .onClick(() => {
               void this.plugin.checkSharedTranslationMemory();
             })
-        );
+        ); }
+    });
 
       if (this.plugin.settings.sharedMemoryEnabled) {
-        new Setting(containerEl)
-          .setName("Shared memory command")
-          .setDesc("Leave empty to use ~/Library/CCLiveTranslator/bin/cclt-shared-memory.")
+        definitions.push({ name: "Shared memory command", desc: "Leave empty to use ~/Library/CCLiveTranslator/bin/cclt-shared-memory.",
+      render: (setting) => { setting
           .addText((text) =>
             text
               .setPlaceholder("~/Library/CCLiveTranslator/bin/cclt-shared-memory")
@@ -3634,14 +3638,14 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
                 this.plugin.configureSharedMemory();
                 await this.plugin.saveSettings();
               })
-          );
+          ); }
+    });
       }
     }
 
     if (this.plugin.settings.aiBackend === "auto" || this.plugin.settings.aiBackend === "claude") {
-      new Setting(containerEl)
-        .setName("Claude command")
-        .setDesc("Used by Claude or Auto mode. Leave empty to auto-detect the Claude Code CLI.")
+      definitions.push({ name: "Claude command", desc: "Used by Claude or Auto mode. Leave empty to auto-detect the Claude Code CLI.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder(process.platform === "win32" ? "claude.cmd" : "/opt/homebrew/bin/claude")
@@ -3650,11 +3654,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.claudeCommand = value.trim();
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
 
-      new Setting(containerEl)
-        .setName("Claude model")
-        .setDesc("Used by Claude or Auto mode when Claude Code is available.")
+      definitions.push({ name: "Claude model", desc: "Used by Claude or Auto mode when Claude Code is available.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder("claude-sonnet-4-5")
@@ -3663,13 +3667,13 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.claudeModel = value.trim() || DEFAULT_SETTINGS.claudeModel;
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
     }
 
     if (this.plugin.settings.aiBackend === "openai") {
-      new Setting(containerEl)
-        .setName("API key")
-        .setDesc("Stored in this plugin's local Obsidian settings. Use the key issued by the service at the base URL below.")
+      definitions.push({ name: "API key", desc: "Stored in this plugin's local Obsidian settings. Use the key issued by the service at the base URL below.",
+      render: (setting) => { setting
         .addText((text) => {
           text.inputEl.type = "password";
           text
@@ -3679,11 +3683,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.openaiApiKey = value.trim();
               await this.plugin.saveSettings();
             });
-        });
+        }); }
+    });
 
-      new Setting(containerEl)
-        .setName("API model")
-        .setDesc("Used for all AI text features and video chat. Choose a vision-capable model for screenshots.")
+      definitions.push({ name: "API model", desc: "Used for all AI text features and video chat. Choose a vision-capable model for screenshots.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder("gpt-4.1-mini")
@@ -3692,11 +3696,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.openaiModel = value.trim() || DEFAULT_SETTINGS.openaiModel;
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
 
-      new Setting(containerEl)
-        .setName("API base URL")
-        .setDesc("OpenAI: https://api.openai.com/v1 · Gemini: https://generativelanguage.googleapis.com/v1beta/openai · OpenRouter: https://openrouter.ai/api/v1. Use the matching key and model ID.")
+      definitions.push({ name: "API base URL", desc: "OpenAI: https://api.openai.com/v1 · Gemini: https://generativelanguage.googleapis.com/v1beta/openai · OpenRouter: https://openrouter.ai/api/v1. Use the matching key and model ID.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder("https://api.openai.com/v1")
@@ -3705,13 +3709,13 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.openaiBaseUrl = value.trim() || DEFAULT_SETTINGS.openaiBaseUrl;
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
     }
 
     if (this.plugin.settings.aiBackend === "anthropic") {
-      new Setting(containerEl)
-        .setName("Anthropic API key")
-        .setDesc("Stored in this plugin's local Obsidian settings. Required only for Anthropic API mode.")
+      definitions.push({ name: "Anthropic API key", desc: "Stored in this plugin's local Obsidian settings. Required only for Anthropic API mode.",
+      render: (setting) => { setting
         .addText((text) => {
           text.inputEl.type = "password";
           text
@@ -3721,11 +3725,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.anthropicApiKey = value.trim();
               await this.plugin.saveSettings();
             });
-        });
+        }); }
+    });
 
-      new Setting(containerEl)
-        .setName("Anthropic model")
-        .setDesc("Used by Anthropic API mode.")
+      definitions.push({ name: "Anthropic model", desc: "Used by Anthropic API mode.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder("claude-sonnet-4-5")
@@ -3734,11 +3738,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.anthropicModel = value.trim() || DEFAULT_SETTINGS.anthropicModel;
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
 
-      new Setting(containerEl)
-        .setName("Anthropic base URL")
-        .setDesc("Keep the default unless you use a compatible proxy.")
+      definitions.push({ name: "Anthropic base URL", desc: "Keep the default unless you use a compatible proxy.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder("https://api.anthropic.com/v1")
@@ -3747,12 +3751,12 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.anthropicBaseUrl = value.trim() || DEFAULT_SETTINGS.anthropicBaseUrl;
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
     }
 
-    new Setting(containerEl)
-      .setName("Source language")
-      .setDesc("Language of the text you are reading. Auto detect works well for mixed notes.")
+    definitions.push({ name: "Source language", desc: "Language of the text you are reading. Auto detect works well for mixed notes.",
+      render: (setting) => { setting
       .addDropdown((dropdown) => {
         LANGUAGE_OPTIONS.forEach((option) => {
           dropdown.addOption(option.code, option.label);
@@ -3763,11 +3767,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.sourceLanguage = value;
             await this.plugin.saveSettings();
           });
-      });
+      }); }
+    });
 
-    new Setting(containerEl)
-      .setName("Learning / target language")
-      .setDesc("The language you want translations and vocabulary explanations to use.")
+    definitions.push({ name: "Learning / target language", desc: "The language you want translations and vocabulary explanations to use.",
+      render: (setting) => { setting
       .addDropdown((dropdown) => {
         LANGUAGE_OPTIONS
           .filter((option) => option.code !== "auto")
@@ -3780,12 +3784,12 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.targetLanguage = value || DEFAULT_SETTINGS.targetLanguage;
             await this.plugin.saveSettings();
           });
-      });
+      }); }
+    });
 
     if (HAS_TRANSLATOR) {
-    new Setting(containerEl)
-      .setName("Auto translate selection")
-      .setDesc("Show a translation popup shortly after text is selected.")
+    definitions.push({ name: "Auto translate selection", desc: "Show a translation popup shortly after text is selected.",
+      render: (setting) => { setting
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.autoTranslate)
@@ -3793,11 +3797,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.autoTranslate = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName(`Require ${modifierLabel} key for auto translate`)
-      .setDesc(`When enabled, the popup only appears if you hold ${modifierLabel} while selecting text.`)
+    definitions.push({ name: `Require ${modifierLabel} key for auto translate`, desc: `When enabled, the popup only appears if you hold ${modifierLabel} while selecting text.`,
+      render: (setting) => { setting
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.requireCommandForAutoTranslate)
@@ -3805,14 +3809,14 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.requireCommandForAutoTranslate = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
     }
 
     if (this.plugin.settings.aiBackend === "auto" || this.plugin.settings.aiBackend === "codex") {
-      new Setting(containerEl)
-        .setName("Codex command")
-        .setDesc("Used by Codex or Auto fallback. Leave empty to auto-detect Codex.app or the local Codex CLI.")
+      definitions.push({ name: "Codex command", desc: "Used by Codex or Auto fallback. Leave empty to auto-detect Codex.app or the local Codex CLI.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder(process.platform === "win32" ? "codex.cmd" : "/Applications/Codex.app/Contents/Resources/codex")
@@ -3821,11 +3825,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.codexCommand = value.trim();
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
 
-      new Setting(containerEl)
-        .setName("Codex model")
-        .setDesc("Used by Codex or Auto fallback. For ChatGPT login, gpt-5.4-mini is a good default.")
+      definitions.push({ name: "Codex model", desc: "Used by Codex or Auto fallback. In Manual mode, enter a model available to your account.",
+      render: (setting) => { setting
         .addText((text) =>
           text
             .setPlaceholder("gpt-5.4-mini")
@@ -3834,12 +3838,12 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.model = value.trim() || DEFAULT_SETTINGS.model;
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
     }
 
-    new Setting(containerEl)
-      .setName("Custom prompt / context")
-      .setDesc("Add translation background or preferences, for example the book or domain you are reading.")
+    definitions.push({ name: "Custom prompt / context", desc: "Add translation background or preferences, for example the book or domain you are reading.",
+      render: (setting) => { setting
       .addTextArea((text) => {
           text
             .setPlaceholder("I am reading a finance or psychology book. Keep key terms consistent and explain vocabulary in my target language.")
@@ -3851,12 +3855,12 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
 
         text.inputEl.rows = 6;
         text.inputEl.addClass("contextual-ai-reader-settings-textarea");
-      });
+      }); }
+    });
 
     if (HAS_TRANSLATOR) {
-    new Setting(containerEl)
-      .setName("Excerpt file")
-      .setDesc("Vault path where selected passages are saved.")
+    definitions.push({ name: "Excerpt file", desc: "Vault path where selected passages are saved.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.excerptFilePath)
@@ -3865,11 +3869,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.excerptFilePath = value.trim() || DEFAULT_SETTINGS.excerptFilePath;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Open excerpt file after saving")
-      .setDesc("Open the excerpt note in a right-side split after saving.")
+    definitions.push({ name: "Open excerpt file after saving", desc: "Open the excerpt note in a right-side split after saving.",
+      render: (setting) => { setting
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.openExcerptAfterSave)
@@ -3877,11 +3881,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.openExcerptAfterSave = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Include translation in excerpts")
-      .setDesc("When available, save the popup translation under the original text.")
+    definitions.push({ name: "Include translation in excerpts", desc: "When available, save the popup translation under the original text.",
+      render: (setting) => { setting
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.includeTranslationInExcerpt)
@@ -3889,14 +3893,14 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.includeTranslationInExcerpt = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
     }
 
     if (HAS_VIDEO) {
-    new Setting(containerEl)
-      .setName("Video screenshot folder")
-      .setDesc("Vault folder used when a captured frame is also inserted into an open note.")
+    definitions.push({ name: "Video screenshot folder", desc: "Vault folder used when a captured frame is also inserted into an open note.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.youtubeScreenshotFolder)
@@ -3905,11 +3909,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeScreenshotFolder = value.trim() || DEFAULT_SETTINGS.youtubeScreenshotFolder;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Insert captured video frames into an open note")
-      .setDesc("Every frame is copied to the system clipboard. When enabled, an open Markdown note also receives a timestamped image embed.")
+    definitions.push({ name: "Insert captured video frames into an open note", desc: "Every frame is copied to the system clipboard. When enabled, an open Markdown note also receives a timestamped image embed.",
+      render: (setting) => { setting
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.youtubeCaptureInsertIntoActiveNote)
@@ -3917,11 +3921,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeCaptureInsertIntoActiveNote = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Video screenshot display width")
-      .setDesc("Width in pixels used when the clean video frame is embedded in a note. The saved PNG keeps its original resolution.")
+    definitions.push({ name: "Video screenshot display width", desc: "Width in pixels used when the clean video frame is embedded in a note. The saved PNG keeps its original resolution.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder(String(DEFAULT_SETTINGS.youtubeScreenshotWidth))
@@ -3933,11 +3937,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               : DEFAULT_SETTINGS.youtubeScreenshotWidth;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Original video subtitle size")
-      .setDesc("Font size in pixels for the original-language subtitle shown over the video.")
+    definitions.push({ name: "Original video subtitle size", desc: "Font size in pixels for the original-language subtitle shown over the video.",
+      render: (setting) => { setting
       .addSlider((slider) =>
         slider
           .setLimits(10, 48, 1)
@@ -3947,11 +3951,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeOriginalSubtitleFontSize = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Original video subtitle color")
-      .setDesc("Text color for the original-language subtitle.")
+    definitions.push({ name: "Original video subtitle color", desc: "Text color for the original-language subtitle.",
+      render: (setting) => { setting
       .addColorPicker((picker) =>
         picker
           .setValue(this.plugin.settings.youtubeOriginalSubtitleColor)
@@ -3959,11 +3963,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeOriginalSubtitleColor = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Translated video subtitle size")
-      .setDesc("Font size in pixels for the translated subtitle shown over the video.")
+    definitions.push({ name: "Translated video subtitle size", desc: "Font size in pixels for the translated subtitle shown over the video.",
+      render: (setting) => { setting
       .addSlider((slider) =>
         slider
           .setLimits(10, 48, 1)
@@ -3973,11 +3977,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeTranslationSubtitleFontSize = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Translated video subtitle color")
-      .setDesc("Text color for the translated subtitle.")
+    definitions.push({ name: "Translated video subtitle color", desc: "Text color for the translated subtitle.",
+      render: (setting) => { setting
       .addColorPicker((picker) =>
         picker
           .setValue(this.plugin.settings.youtubeTranslationSubtitleColor)
@@ -3985,11 +3989,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeTranslationSubtitleColor = value;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Video transcript folder")
-      .setDesc("Vault folder for notes created from interactive transcripts.")
+    definitions.push({ name: "Video transcript folder", desc: "Vault folder for notes created from interactive transcripts.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.youtubeTranscriptFolder)
@@ -3998,11 +4002,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeTranscriptFolder = value.trim() || DEFAULT_SETTINGS.youtubeTranscriptFolder;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("yt-dlp command")
-      .setDesc("Used for protected captions, clean frame capture, and no-caption audio. Leave empty to auto-detect yt-dlp.")
+    definitions.push({ name: "yt-dlp command", desc: "Used for protected captions, clean frame capture, and no-caption audio. Leave empty to auto-detect yt-dlp.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder(process.platform === "win32" ? "yt-dlp.exe" : "/opt/homebrew/bin/yt-dlp")
@@ -4011,11 +4015,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeYtDlpCommand = value.trim();
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("ffmpeg command")
-      .setDesc("Used to extract clean video frames and prepare no-caption audio. Leave empty to auto-detect ffmpeg.")
+    definitions.push({ name: "ffmpeg command", desc: "Used to extract clean video frames and prepare no-caption audio. Leave empty to auto-detect ffmpeg.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder(process.platform === "win32" ? "ffmpeg.exe" : "/opt/homebrew/bin/ffmpeg")
@@ -4024,11 +4028,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeFfmpegCommand = value.trim();
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("No-caption transcription")
-      .setDesc("When a video has no CC track, transcribe its audio with timestamped Whisper segments. Auto prefers Groq, then the transcription API below. Chat-only providers may not support audio transcription.")
+    definitions.push({ name: "No-caption transcription", desc: "When a video has no CC track, transcribe its audio with timestamped Whisper segments. Auto prefers Groq, then the transcription API below. Chat-only providers may not support audio transcription.",
+      render: (setting) => { setting
       .addDropdown((dropdown) =>
         dropdown
           .addOption("auto", "Auto (Groq, then transcription API)")
@@ -4040,11 +4044,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.youtubeTranscriptionBackend = value as YouTubeTranscriptionBackend;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Groq API key for transcription")
-      .setDesc("Optional. Stored only in this plugin's local Obsidian data. Used for videos without captions.")
+    definitions.push({ name: "Groq API key for transcription", desc: "Optional. Stored only in this plugin's local Obsidian data. Used for videos without captions.",
+      render: (setting) => { setting
       .addText((text) => {
         text
           .setPlaceholder("gsk_…")
@@ -4054,27 +4058,29 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           });
         text.inputEl.type = "password";
-      });
+      }); }
+    });
 
     for (const field of [
       { key: "transcriptionApiKey" as const, name: "Transcription API key", description: "Separate audio-service key. If empty, reuse the chat key only when both base URLs match.", secret: true },
       { key: "transcriptionBaseUrl" as const, name: "Transcription API base URL", description: "Service supporting /audio/transcriptions and verbose_json with timestamped segments. Independent of the chat provider.", secret: false },
       { key: "transcriptionModel" as const, name: "Transcription model", description: "A model that returns timestamped segments, such as whisper-1 on OpenAI.", secret: false }
     ]) {
-      new Setting(containerEl).setName(field.name).setDesc(field.description).addText((text) => {
+      definitions.push({ name: field.name, desc: field.description,
+      render: (setting) => { setting.addText((text) => {
         if (field.secret) text.inputEl.type = "password";
         text.setValue(this.plugin.settings[field.key]).onChange(async (value) => {
           this.plugin.settings[field.key] = value.trim(); await this.plugin.saveSettings();
         });
-      });
+      }); }
+    });
     }
 
     }
 
     if (HAS_TRANSLATOR) {
-    new Setting(containerEl)
-      .setName("Speech language")
-      .setDesc("Language tag used by the system text-to-speech voice.")
+    definitions.push({ name: "Speech language", desc: "Language tag used by the system text-to-speech voice.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder("en-US")
@@ -4083,11 +4089,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
             this.plugin.settings.speechLanguage = value.trim() || DEFAULT_SETTINGS.speechLanguage;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Speech rate")
-      .setDesc("Use a value between 0.5 and 1.5.")
+    definitions.push({ name: "Speech rate", desc: "Use a value between 0.5 and 1.5.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder("0.92")
@@ -4099,11 +4105,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               : DEFAULT_SETTINGS.speechRate;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Auto translate delay")
-      .setDesc("Milliseconds to wait after selection changes.")
+    definitions.push({ name: "Auto translate delay", desc: "Milliseconds to wait after selection changes.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder("450")
@@ -4115,11 +4121,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               : DEFAULT_SETTINGS.debounceMs;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Minimum selection length")
-      .setDesc("Shorter selections will not trigger automatic translation.")
+    definitions.push({ name: "Minimum selection length", desc: "Shorter selections will not trigger automatic translation.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder("2")
@@ -4131,14 +4137,14 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               : DEFAULT_SETTINGS.minSelectionChars;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
     }
 
     if (this.plugin.settings.aiBackend === "auto" || this.plugin.settings.aiBackend === "codex") {
-      new Setting(containerEl)
-        .setName("Reasoning effort")
-        .setDesc("Used by Codex or Auto fallback. Use none for translation unless you need heavier reasoning.")
+      definitions.push({ name: "Reasoning effort", desc: "Used by Codex or Auto fallback. Use none for translation unless you need heavier reasoning.",
+      render: (setting) => { setting
         .addDropdown((dropdown) =>
           dropdown
             .addOption("none", "none")
@@ -4151,12 +4157,12 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               this.plugin.settings.reasoningEffort = value as ReasoningEffort;
               await this.plugin.saveSettings();
             })
-        );
+        ); }
+    });
     }
 
-    new Setting(containerEl)
-      .setName("Timeout")
-      .setDesc("Maximum seconds to wait for the AI.")
+    definitions.push({ name: "Timeout", desc: "Maximum seconds to wait for the AI.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder("90")
@@ -4168,12 +4174,12 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               : DEFAULT_SETTINGS.timeoutSeconds;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
     if (HAS_TRANSLATOR) {
-    new Setting(containerEl)
-      .setName("Single-shot translation limit (characters)")
-      .setDesc("Documents under this length are sent to the AI in one request for better context. Saved lower values are treated as at least 60000.")
+    definitions.push({ name: "Single-shot translation limit (characters)", desc: "Documents under this length are sent to the AI in one request for better context. Saved lower values are treated as at least 60000.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder("60000")
@@ -4185,11 +4191,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               : DEFAULT_SETTINGS.singleShotMaxChars;
             await this.plugin.saveSettings();
           })
-      );
+      ); }
+    });
 
-    new Setting(containerEl)
-      .setName("Batch chunk size (characters)")
-      .setDesc("When falling back to batch mode, how many characters per chunk. Saved lower values are treated as at least 30000.")
+    definitions.push({ name: "Batch chunk size (characters)", desc: "When falling back to batch mode, how many characters per chunk. Saved lower values are treated as at least 30000.",
+      render: (setting) => { setting
       .addText((text) =>
         text
           .setPlaceholder("30000")
@@ -4201,9 +4207,11 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
               : DEFAULT_SETTINGS.batchChunkChars;
             await this.plugin.saveSettings();
           })
-      );    }
+      ); }
+    });    }
 
 
+    return definitions;
   }
 }
 

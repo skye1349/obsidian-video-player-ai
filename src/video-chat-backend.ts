@@ -1,3 +1,4 @@
+import { buildClaudeArgs } from "./claude-args";
 import { EconomyModels, type ModelSelection } from "./economy-model";
 import { mkdtemp, readFile, rm, writeFile } from "fs/promises";
 import { tmpdir } from "os";
@@ -112,7 +113,7 @@ export async function runVideoChatAI(config: VideoChatBackendConfig, prompt: str
       }
       // Stream-JSON user messages accept the same text/image blocks as the Messages API.
       const stdin = JSON.stringify({ type: "user", message: { role: "user", content: buildAnthropicChatContent(prompt, frames) } }) + "\n";
-      const result = await runVideoChatProcess(config.command || "claude", ["--print", "--no-session-persistence", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose", "--setting-sources", "", "--model", config.model, "--tools", "", "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}'], stdin, config.timeoutMs, signal, directory);
+      const result = await runVideoChatProcess(config.command || "claude", buildClaudeArgs(config.model, true), stdin, config.timeoutMs, signal, directory);
       const events = result.stdout.trim().split(/\r?\n/).map((line) => JSON.parse(line) as { type?: string; result?: string; is_error?: boolean });
       const data = events.reverse().find((event) => event.type === "result");
       if (data?.is_error || !data?.result?.trim()) throw new Error(data?.result || "Claude Code returned an empty answer.");

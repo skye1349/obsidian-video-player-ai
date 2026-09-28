@@ -1,3 +1,4 @@
+import { setTimeout, clearTimeout } from "timers";
 import { spawn } from "child_process";
 import { existsSync } from "fs";
 import { homedir } from "os";

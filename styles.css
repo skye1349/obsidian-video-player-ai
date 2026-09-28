@@ -302,10 +302,10 @@
   background: var(--interactive-accent);
 }
 
-.youtube-reader-shell.is-resizing,
-.youtube-reader-shell.is-resizing * {
-  cursor: col-resize !important;
-  user-select: none !important;
+.workspace-leaf-content .youtube-reader-shell.is-resizing,
+.workspace-leaf-content .youtube-reader-shell.is-resizing * {
+  cursor: col-resize;
+  user-select: none;
 }
 
 .youtube-reader-shell.is-resizing::after {
@@ -355,7 +355,7 @@
 
 .youtube-reader-player video,
 .youtube-reader-player iframe,
-.youtube-reader-player webview {
+.youtube-reader-player .youtube-reader-webview {
   position: absolute;
   z-index: 1;
   inset: 0;
@@ -364,13 +364,13 @@
   border: 0;
 }
 
-.youtube-reader-player.is-windowed-fullscreen {
-  position: absolute !important;
+.youtube-reader-shell .youtube-reader-player.is-windowed-fullscreen {
+  position: absolute;
   z-index: 4;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 0 !important;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   background: #000;
 }
 
@@ -655,7 +655,7 @@
 
 /* Video-aware AI conversation, shared by local media and YouTube. */
 .video-chat-panel { display: flex; flex: 1 1 auto; min-height: 0; min-width: 0; flex-direction: column; overflow: hidden; }
-.video-chat-panel.is-hidden, .video-chat-transcript-hidden { display: none !important; }
+.youtube-reader-shell .video-chat-panel.is-hidden, .youtube-reader-shell .video-chat-transcript-hidden { display: none; }
 .youtube-reader-transcript-header { flex-wrap: wrap; flex: 0 0 auto; min-height: 44px; padding: 6px 10px; gap: 6px; }
 .video-chat-open { margin-left: auto; }
 .video-chat-tab { box-shadow: none; background: transparent; padding: 4px; }

@@ -123,6 +123,12 @@ interface YouTubeMessage {
   };
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    webview: YouTubeWebviewElement;
+  }
+}
+
 interface YouTubeWebviewElement extends HTMLElement {
   allowpopups: boolean;
   capturePage?: (rect?: { height: number; width: number; x: number; y: number }) => Promise<{
@@ -313,7 +319,7 @@ export class YouTubeLearningView extends ItemView {
   async captureDisplayedVideoFrame(): Promise<Uint8Array | undefined> {
     const video = this.localVideoEl;
     if (video && video.readyState >= 2 && video.videoWidth > 0) {
-      const canvas = this.containerEl.doc.createElement("canvas");
+      const canvas = this.containerEl.win.createEl("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const context = canvas.getContext("2d");
@@ -680,7 +686,8 @@ export class YouTubeLearningView extends ItemView {
 
   private renderWebviewPlayer(data: YouTubeVideoData) {
     if (!this.playerEl) return;
-    const webview = this.containerEl.doc.createElement("webview") as YouTubeWebviewElement;
+    const webview = this.containerEl.win.createEl("webview");
+    webview.addClass("youtube-reader-webview");
     const appWithWebviewPartition = this.app as App & { getWebviewPartition?: () => string };
     webview.allowpopups = true;
     const partition = appWithWebviewPartition.getWebviewPartition?.();
