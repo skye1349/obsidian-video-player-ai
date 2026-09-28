@@ -4,13 +4,23 @@ Obsidian에서 YouTube와 로컬 영상을 보고, 이중 언어 자막·스크�
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## 주요 기능
+
+- Obsidian에서 YouTube와 로컬 영상을 재생합니다.
+- 이중 언어 자막을 읽고 자막 노트를 만듭니다.
+- 화면을 캡처하고 시간 링크로 해당 장면에 돌아갑니다.
+- AI 요약과 설명을 받고 대화를 이어 질문합니다.
+- 새 메시지만 같은 노트에 추가하거나 답변 하나만 저장합니다.
+- 스크린샷·자막·대화 노트의 저장 위치를 정합니다.
+
 ## 설치
 
 데스크톱 Obsidian 1.13.7 이상이 필요합니다. 모바일은 지원하지 않습니다.
 
-커뮤니티 목록 심사를 기다리고 있습니다. 설치 버튼이 열리기 전에는 수동으로 설치하세요.
-
-[최신 릴리스](https://github.com/skye1349/obsidian-video-player-ai/releases/latest)에서 **main.js**, **manifest.json**, **styles.css**를 받아 `<vault>/.obsidian/plugins/video-player-ai/`에 넣습니다. Obsidian을 재시작하고 **설정 → 커뮤니티 플러그인**에서 **Video Player (AI integrated)**을 활성화하세요. 승인 후에는 Browse에서 이름을 검색해 설치할 수 있습니다.
+1. Obsidian **설정 → 커뮤니티 플러그인**을 열고 필요한 경우 활성화합니다.
+2. **탐색(Browse)**에서 **Video Player (AI integrated)**을 검색합니다.
+3. **설치(Install)** 후 **활성화(Enable)**를 누릅니다.
+4. 플러그인 설정에서 언어와 AI 서비스를 선택합니다.
 
 ## 첫 영상 열기
 

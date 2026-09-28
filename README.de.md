@@ -4,13 +4,23 @@ Sieh YouTube und lokale Videos in Obsidian an, lerne mit zweisprachigen Untertit
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## Was du damit machen kannst
+
+- YouTube und lokale Videos in Obsidian abspielen.
+- Zweisprachige Untertitel lesen und als Notiz exportieren.
+- Bilder mit Zeitlinks zur passenden Videostelle aufnehmen.
+- KI um Zusammenfassungen und Erklärungen bitten und weiterfragen.
+- Neue Nachrichten an dieselbe Notiz anhängen oder eine Antwort speichern.
+- Ordner für Bilder, Transkripte und Chatnotizen festlegen.
+
 ## Installation
 
 Benötigt Obsidian für Desktop ab Version 1.13.7. Mobilgeräte werden nicht unterstützt.
 
-Die Prüfung im Community-Verzeichnis steht noch aus. Verwende bis zur Freigabe die manuelle Installation.
-
-Lade **main.js**, **manifest.json** und **styles.css** aus der [neuesten Version](https://github.com/skye1349/obsidian-video-player-ai/releases/latest) herunter und lege sie unter `<vault>/.obsidian/plugins/video-player-ai/` ab. Starte Obsidian neu und aktiviere **Video Player (AI integrated)** unter **Einstellungen → Community-Erweiterungen**. Nach der Freigabe kannst du **Video Player (AI integrated)** auch über Browse suchen und installieren.
+1. Öffne **Einstellungen → Community-Erweiterungen** und aktiviere sie bei Bedarf.
+2. Klicke auf **Durchsuchen (Browse)** und suche **Video Player (AI integrated)**.
+3. Klicke auf **Installieren (Install)** und dann **Aktivieren (Enable)**.
+4. Wähle Sprache und KI-Dienst in den Plugin-Einstellungen.
 
 ## Dein erstes Video
 

@@ -4,13 +4,23 @@ Watch, understand and take notes without leaving Obsidian. Open YouTube or local
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## What you can do
+
+- Play YouTube and local videos inside your vault.
+- Read bilingual subtitles and export captions as a note.
+- Capture screenshots with links back to the video timestamp.
+- Ask AI to summarize or explain the video, then ask follow-up questions.
+- Append new chat messages to an existing note, or save just one answer.
+- Choose your own folders for screenshots, transcripts and chat notes.
+
 ## Install
 
 Desktop Obsidian 1.13.7 or later is required. Mobile is not supported.
 
-Community-directory review is pending. Until the Install button is available, use the manual installation below.
-
-Download **main.js**, **manifest.json**, and **styles.css** from the [latest release](https://github.com/skye1349/obsidian-video-player-ai/releases/latest). Create `<vault>/.obsidian/plugins/video-player-ai/`, put the three files there, restart Obsidian, then enable **Video Player (AI integrated)** in **Settings → Community plugins**. When the directory listing is approved, you can instead search for **Video Player (AI integrated)** under **Browse**, install and enable it.
+1. Open **Settings → Community plugins** in Obsidian and enable community plugins if prompted.
+2. Click **Browse** and search for **Video Player (AI integrated)**.
+3. Click **Install**, then **Enable**.
+4. Open the plugin’s settings to choose your language and AI service.
 
 ## Your first video
 

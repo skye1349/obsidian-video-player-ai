@@ -4,13 +4,23 @@ ObsidianでYouTubeやローカル動画を視聴し、対訳字幕、スクリ�
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## できること
+
+- YouTubeとローカル動画をObsidian内で再生。
+- 対訳字幕を読み、字幕をノートに書き出す。
+- 画像を保存し、時刻リンクから動画へ戻る。
+- AIに要約や説明を頼み、会話の続きを質問する。
+- 新しいメッセージを同じノートに追記、または回答を個別保存。
+- 画像・字幕・チャットノートの保存先を指定。
+
 ## インストール
 
 デスクトップ版 Obsidian 1.13.7 以降が必要です。モバイルには対応していません。
 
-コミュニティ一覧の審査待ちです。インストールボタンが利用できるまでは手動で導入してください。
-
-[最新リリース](https://github.com/skye1349/obsidian-video-player-ai/releases/latest)から **main.js**、**manifest.json**、**styles.css** を取得し、`<vault>/.obsidian/plugins/video-player-ai/` に置きます。Obsidian を再起動し、**設定 → コミュニティプラグイン**で **Video Player (AI integrated)** を有効化してください。公開承認後は Browse で名前を検索してインストールできます。
+1. Obsidian の**設定 → コミュニティプラグイン**を開き、必要なら有効にします。
+2. **閲覧（Browse）**で **Video Player (AI integrated)** を検索します。
+3. **インストール（Install）**、**有効化（Enable）**の順に選びます。
+4. プラグイン設定で言語とAIサービスを選びます。
 
 ## 最初の動画
 

@@ -4,13 +4,23 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
+## 能做什么
+
+- 在 Obsidian 内播放 YouTube 和本地视频。
+- 阅读双语字幕，把字幕导出成笔记。
+- 截取视频画面，点击时间戳回到对应片段。
+- 让 AI 总结视频、解释内容，并结合聊天历史继续追问。
+- 把新聊天追加到同一篇笔记，或只保存某一条回答。
+- 自定义截图、字幕笔记和聊天笔记的保存位置。
+
 ## 安装
 
 需要桌面版 Obsidian 1.13.7 或更新版本，不支持手机和平板。
 
-社区插件目录正在等待审核。安装按钮开放前，请按下面的方法手动安装。
-
-从[最新版本](https://github.com/skye1349/obsidian-video-player-ai/releases/latest)下载 **main.js**、**manifest.json** 和 **styles.css**。在笔记库中创建 `<笔记库>/.obsidian/plugins/video-player-ai/`，放入这三个文件，重启 Obsidian，然后在**设置 → 第三方插件**中启用 **Video Player (AI integrated)**。目录审核通过后，也可以在「浏览」中搜索 **Video Player (AI integrated)**，安装并启用。
+1. 打开 Obsidian 的**设置 → 第三方插件**，如有提示先启用第三方插件。
+2. 点击**浏览**，搜索 **Video Player (AI integrated)**。
+3. 点击**安装**，然后**启用**。
+4. 打开插件设置，选择语言和 AI 服务。
 
 ## 打开第一个视频
 
