@@ -41,7 +41,7 @@ Nécessite Obsidian pour ordinateur 1.13.7 ou ultérieur. Le mobile n’est pas 
 
 Choisissez **AI backend** dans les paramètres du module. OpenAI et Anthropic nécessitent votre propre clé API ; leur utilisation est facturée par le fournisseur. Pour **Codex / Claude Code** locaux, installez le logiciel et connectez-vous d’abord. Si nécessaire, indiquez son chemin dans **Codex command / Claude command**. Un CLI local peut aussi envoyer le contenu à son fournisseur IA.
 
-Commencez avec **Automatic · Economy** : modèles légers pris en charge, choix conservé une heure, sans passage automatique au premium. Utilisez **Manual** pour fixer un modèle ou une URL API personnalisée. Vérifiez l’API avec **Test API connection**. Chaque module a ses propres réglages.
+Commencez avec **Automatic · Economy** : modèles légers pris en charge, choix conservé une heure, sans passage automatique au premium. Utilisez **Manual** pour fixer un modèle ou une URL API personnalisée. Vérifiez l’API avec **Test API connection**.
 
 ## Questions et notes
 
@@ -55,7 +55,7 @@ Sans sous-titres, configurez **No-caption transcription** et un service audio s�
 
 Les clés API sont enregistrées dans les paramètres du module dans le coffre. Protégez-les lors du partage ou de la synchronisation. En cas d’erreur, vérifiez le fournisseur, l’authentification et le modèle. Les erreurs de quota ou de réseau ne changent pas le modèle.
 
-Pour traduire du texte, utilisez [AI Translator](https://github.com/skye1349/obsidian-ai-translator). Les deux fonctionnent indépendamment. Ce nouveau module ne remplace pas Read and Watch with AI et ne modifie pas les anciens liens.
+Pour traduire du texte, utilisez [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Aide
 

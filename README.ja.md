@@ -41,7 +41,7 @@ ObsidianでYouTubeやローカル動画を視聴し、対訳字幕、スクリ�
 
 本プラグインの **AI backend** でサービスを選びます。OpenAI / Anthropic はご自身の API キーを入力してください。利用料金はサービス側で発生します。ローカルの **Codex / Claude Code** は先にインストールしてログインします。見つからない場合は **Codex command / Claude command** にパスを指定してください。ローカルCLIでも内容がAIサービスへ送られる場合があります。
 
-通常は **Automatic · Economy** を使用します。対応する軽量モデルを選び、選択を1時間キャッシュし、高価格モデルへ自動変更しません。固定モデルや独自APIアドレスには **Manual** を選びます。API接続は **Test API connection** で確認できます。両プラグインの設定は独立しています。
+通常は **Automatic · Economy** を使用します。対応する軽量モデルを選び、選択を1時間キャッシュし、高価格モデルへ自動変更しません。固定モデルや独自APIアドレスには **Manual** を選びます。API接続は **Test API connection** で確認できます。
 
 ## 質問と保存
 
@@ -55,7 +55,7 @@ ObsidianでYouTubeやローカル動画を視聴し、対訳字幕、スクリ�
 
 APIキーは保管庫内のプラグイン設定に保存されます。保管庫の共有・同期時は設定を保護してください。AIエラー時はサービス、認証、モデルを確認します。残高・通信エラーではモデルを自動変更しません。
 
-文章の翻訳には [AI Translator](https://github.com/skye1349/obsidian-ai-translator) を使用できます。どちらも単独で動作します。これは新しいプラグインであり、旧 Read and Watch with AI や既存リンクは変更しません。
+文章の翻訳には [AI Translator](https://github.com/skye1349/obsidian-ai-translator) を使用できます。
 
 ## サポート
 

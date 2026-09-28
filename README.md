@@ -41,7 +41,7 @@ Desktop Obsidian 1.13.7 or later is required. Mobile is not supported.
 
 Open this plugin’s settings and choose **AI backend**. For OpenAI or Anthropic, enter your own API key. API usage is billed by that provider. For local **Codex** or **Claude Code**, install and sign in to that application first; set **Codex command** or **Claude command** if it is not found automatically. Local CLI use can still send your content to its AI provider.
 
-Start with **Automatic · Economy** for supported lightweight models. It caches selections for one hour and never automatically upgrades to a flagship model. Use **Manual** to choose a specific model; custom API base URLs require Manual mode. If using an API, run **Test API connection**. Each plugin has its own settings.
+Start with **Automatic · Economy** for supported lightweight models. It caches selections for one hour and never automatically upgrades to a flagship model. Use **Manual** to choose a specific model; custom API base URLs require Manual mode. If using an API, run **Test API connection**.
 
 ## Ask questions and save notes
 
@@ -57,7 +57,7 @@ Choose **Video screenshot folder** and **Video transcript folder** for exported 
 
 API keys are saved in this plugin’s settings in your vault. Keep those settings private, including when sharing or syncing your vault. If AI fails, check the selected backend, login/API key and model; quota or network errors do not cause an automatic model switch.
 
-For selected text and document translation, use the separate [AI Translator](https://github.com/skye1349/obsidian-ai-translator). Neither plugin requires the other. This is a new plugin, not an update to Read and Watch with AI; old notes and links are left untouched.
+For selected text and document translation, use the separate [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Help
 

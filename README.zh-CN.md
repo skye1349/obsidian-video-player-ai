@@ -41,7 +41,7 @@
 
 打开本插件设置，在 **AI backend** 中选择服务。使用 OpenAI 或 Anthropic 时填写自己的 API key，费用由对应服务商收取。使用本地 **Codex** 或 **Claude Code** 时，先安装并登录对应程序；若无法自动找到，填写 **Codex command** 或 **Claude command** 路径。本地运行这些程序仍可能把内容发送给其 AI 服务商。
 
-建议保留 **Automatic · Economy / 自动选择 · 经济型**，优先使用支持的轻量模型，缓存选择一小时，不自动升级旗舰模型。需要固定型号时切换 **Manual / 手动指定**；自定义 API 地址也请使用手动模式。API 用户可以点击 **Test API connection** 测试连接。两个插件的设置相互独立。
+建议保留 **Automatic · Economy / 自动选择 · 经济型**，优先使用支持的轻量模型，缓存选择一小时，不自动升级旗舰模型。需要固定型号时切换 **Manual / 手动指定**；自定义 API 地址也请使用手动模式。API 用户可以点击 **Test API connection** 测试连接。
 
 ## 提问与保存笔记
 
@@ -57,7 +57,7 @@
 
 API key 保存在笔记库内的插件设置中，共享或同步笔记库时请保护这些设置。AI 无法使用时，检查服务商、登录/API key 和模型；额度不足或网络故障不会触发自动换模型。
 
-文本与文档翻译请使用独立的 [AI Translator](https://github.com/skye1349/obsidian-ai-translator)。两个插件都可以单独使用。这是全新插件，不会替换 Read and Watch with AI，也不会改动原有笔记和链接。
+文本与文档翻译请使用独立的 [AI Translator](https://github.com/skye1349/obsidian-ai-translator)。
 
 ## 获取帮助
 

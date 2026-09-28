@@ -41,7 +41,7 @@ Benötigt Obsidian für Desktop ab Version 1.13.7. Mobilgeräte werden nicht unt
 
 Wähle **AI backend** in den Plugin-Einstellungen. OpenAI oder Anthropic benötigen deinen eigenen API-Schlüssel; die Nutzung wird vom Anbieter berechnet. Installiere lokale **Codex / Claude Code** zuerst und melde dich an. Falls nötig, gib den Pfad unter **Codex command / Claude command** an. Auch lokale CLIs können Inhalte an ihren KI-Anbieter senden.
 
-Beginne mit **Automatic · Economy**: unterstützte leichte Modelle, eine Stunde Zwischenspeicherung und kein automatischer Wechsel zu Premium. Für ein bestimmtes Modell oder eigene API-Adressen nutze **Manual**. Prüfe die API mit **Test API connection**. Beide Plugins haben getrennte Einstellungen.
+Beginne mit **Automatic · Economy**: unterstützte leichte Modelle, eine Stunde Zwischenspeicherung und kein automatischer Wechsel zu Premium. Für ein bestimmtes Modell oder eigene API-Adressen nutze **Manual**. Prüfe die API mit **Test API connection**.
 
 ## Fragen und Notizen
 
@@ -55,7 +55,7 @@ Ohne Untertitel richte **No-caption transcription** mit einem separaten Audiodie
 
 API-Schlüssel werden in den Plugin-Einstellungen im Vault gespeichert. Schütze diese beim Teilen oder Synchronisieren. Prüfe bei KI-Fehlern Anbieter, Anmeldung und Modell. Kontingent- oder Netzwerkfehler lösen keinen Modellwechsel aus.
 
-Für Textübersetzung nutze [AI Translator](https://github.com/skye1349/obsidian-ai-translator). Beide funktionieren allein. Dieses neue Plugin ersetzt Read and Watch with AI nicht und verändert keine bisherigen Links.
+Für Textübersetzung nutze [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Hilfe
 

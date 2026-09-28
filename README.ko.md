@@ -41,7 +41,7 @@ Obsidian에서 YouTube와 로컬 영상을 보고, 이중 언어 자막·스크�
 
 플러그인 설정의 **AI backend**에서 서비스를 고릅니다. OpenAI 또는 Anthropic은 본인의 API 키를 입력하며 사용료는 해당 업체에서 청구합니다. 로컬 **Codex / Claude Code**는 먼저 설치하고 로그인하세요. 찾지 못하면 **Codex command / Claude command** 경로를 지정하세요. 로컬 CLI도 내용을 AI 서비스로 전송할 수 있습니다.
 
-기본 **Automatic · Economy**는 지원되는 경량 모델을 선택하고 한 시간 캐시하며 고가 모델로 자동 변경하지 않습니다. 특정 모델 또는 사용자 지정 API 주소는 **Manual**을 사용하세요. API는 **Test API connection**으로 확인할 수 있습니다. 두 플러그인의 설정은 독립적입니다.
+기본 **Automatic · Economy**는 지원되는 경량 모델을 선택하고 한 시간 캐시하며 고가 모델로 자동 변경하지 않습니다. 특정 모델 또는 사용자 지정 API 주소는 **Manual**을 사용하세요. API는 **Test API connection**으로 확인할 수 있습니다.
 
 ## 질문과 저장
 
@@ -55,7 +55,7 @@ Obsidian에서 YouTube와 로컬 영상을 보고, 이중 언어 자막·스크�
 
 API 키는 보관함 안의 플러그인 설정에 저장됩니다. 보관함 공유·동기화 시 설정을 보호하세요. AI 오류가 나면 서비스, 로그인/키, 모델을 확인하세요. 할당량과 네트워크 오류는 모델 변경을 유발하지 않습니다.
 
-텍스트 번역은 [AI Translator](https://github.com/skye1349/obsidian-ai-translator)를 사용하세요. 둘 다 독립적으로 동작합니다. 새 플러그인이므로 기존 Read and Watch with AI 및 기존 링크를 변경하지 않습니다.
+텍스트 번역은 [AI Translator](https://github.com/skye1349/obsidian-ai-translator)를 사용하세요.
 
 ## 도움말
 

@@ -41,7 +41,7 @@ Requiere Obsidian de escritorio 1.13.7 o posterior. No admite dispositivos móvi
 
 En los ajustes del plugin, elige **AI backend**. Para OpenAI o Anthropic introduce tu propia clave API; el proveedor cobra el uso. Para **Codex / Claude Code** locales, instala e inicia sesión primero. Si no se detectan, indica la ruta en **Codex command / Claude command**. Un CLI local también puede enviar contenido a su proveedor de IA.
 
-Empieza con **Automatic · Economy**: modelos ligeros admitidos, selección en caché durante una hora y sin salto automático a modelos premium. Elige **Manual** para un modelo concreto o una URL API personalizada. Usa **Test API connection** para comprobar la API. Cada plugin tiene ajustes independientes.
+Empieza con **Automatic · Economy**: modelos ligeros admitidos, selección en caché durante una hora y sin salto automático a modelos premium. Elige **Manual** para un modelo concreto o una URL API personalizada. Usa **Test API connection** para comprobar la API.
 
 ## Preguntar y guardar
 
@@ -55,7 +55,7 @@ Sin subtítulos, configura **No-caption transcription** con credenciales de audi
 
 Las claves API se guardan en los ajustes del plugin dentro de la bóveda. Protégelos al compartirla o sincronizarla. Si falla la IA, revisa el proveedor, la autenticación y el modelo. Los errores de cuota o red no cambian el modelo.
 
-Para traducir texto usa [AI Translator](https://github.com/skye1349/obsidian-ai-translator). Ambos funcionan por separado. Este plugin nuevo no sustituye Read and Watch with AI ni modifica enlaces existentes.
+Para traducir texto usa [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Ayuda
 
