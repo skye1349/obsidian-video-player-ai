@@ -57,7 +57,7 @@ Choose **Video screenshot folder** and **Video transcript folder** for exported 
 
 API keys are saved in this plugin’s settings in your vault. Keep those settings private, including when sharing or syncing your vault. If AI fails, check the selected backend, login/API key and model; quota or network errors do not cause an automatic model switch.
 
-For selected text and document translation, use the separate [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
+For selected text and document translation, use the separate [AI Translation Assistant](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Help
 

@@ -3,7 +3,7 @@ declare const __READER_PRODUCT__: Product;
 export const PRODUCT: Product = typeof __READER_PRODUCT__ === "undefined" ? "combined" : __READER_PRODUCT__;
 export const HAS_VIDEO = PRODUCT !== "translator";
 export const HAS_TRANSLATOR = PRODUCT !== "video";
-export const PRODUCT_NAME = PRODUCT === "video" ? "Video Player (AI integrated)" : PRODUCT === "translator" ? "AI Translator" : "Read and Watch with AI";
+export const PRODUCT_NAME = PRODUCT === "video" ? "Video Player (AI integrated)" : PRODUCT === "translator" ? "AI Translation Assistant" : "Read and Watch with AI";
 
 /** Only reading/AI preferences cross into the new plugin, never video history or audio credentials. */
 export function translatorSettings(source: unknown): Record<string, unknown> {

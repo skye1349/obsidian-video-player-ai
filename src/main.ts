@@ -3542,7 +3542,7 @@ class ContextualAIReaderSettingTab extends PluginSettingTab {
     }
 
     if (PRODUCT !== "combined") containerEl.createEl("p", { text: HAS_VIDEO
-      ? "Play videos, work with subtitles, capture notes, and ask AI about what you watch. Text and document translation is available in AI Translator."
+      ? "Play videos, work with subtitles, capture notes, and ask AI about what you watch. Text and document translation is available in AI Translation Assistant."
       : "Translate selected text and documents, understand vocabulary, and save bilingual notes. Video tools are available in Video Player (AI integrated)." });
 
     new Setting(containerEl)

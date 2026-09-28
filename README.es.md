@@ -55,7 +55,7 @@ Sin subtítulos, configura **No-caption transcription** con credenciales de audi
 
 Las claves API se guardan en los ajustes del plugin dentro de la bóveda. Protégelos al compartirla o sincronizarla. Si falla la IA, revisa el proveedor, la autenticación y el modelo. Los errores de cuota o red no cambian el modelo.
 
-Para traducir texto usa [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
+Para traducir texto usa [AI Translation Assistant](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Ayuda
 

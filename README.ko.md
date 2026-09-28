@@ -55,7 +55,7 @@ Obsidian에서 YouTube와 로컬 영상을 보고, 이중 언어 자막·스크�
 
 API 키는 보관함 안의 플러그인 설정에 저장됩니다. 보관함 공유·동기화 시 설정을 보호하세요. AI 오류가 나면 서비스, 로그인/키, 모델을 확인하세요. 할당량과 네트워크 오류는 모델 변경을 유발하지 않습니다.
 
-텍스트 번역은 [AI Translator](https://github.com/skye1349/obsidian-ai-translator)를 사용하세요.
+텍스트 번역은 [AI Translation Assistant](https://github.com/skye1349/obsidian-ai-translator)를 사용하세요.
 
 ## 도움말
 

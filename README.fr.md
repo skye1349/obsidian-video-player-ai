@@ -55,7 +55,7 @@ Sans sous-titres, configurez **No-caption transcription** et un service audio s�
 
 Les clés API sont enregistrées dans les paramètres du module dans le coffre. Protégez-les lors du partage ou de la synchronisation. En cas d’erreur, vérifiez le fournisseur, l’authentification et le modèle. Les erreurs de quota ou de réseau ne changent pas le modèle.
 
-Pour traduire du texte, utilisez [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
+Pour traduire du texte, utilisez [AI Translation Assistant](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Aide
 

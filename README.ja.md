@@ -55,7 +55,7 @@ ObsidianでYouTubeやローカル動画を視聴し、対訳字幕、スクリ�
 
 APIキーは保管庫内のプラグイン設定に保存されます。保管庫の共有・同期時は設定を保護してください。AIエラー時はサービス、認証、モデルを確認します。残高・通信エラーではモデルを自動変更しません。
 
-文章の翻訳には [AI Translator](https://github.com/skye1349/obsidian-ai-translator) を使用できます。
+文章の翻訳には [AI Translation Assistant](https://github.com/skye1349/obsidian-ai-translator) を使用できます。
 
 ## サポート
 

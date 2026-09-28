@@ -55,7 +55,7 @@ Ohne Untertitel richte **No-caption transcription** mit einem separaten Audiodie
 
 API-Schlüssel werden in den Plugin-Einstellungen im Vault gespeichert. Schütze diese beim Teilen oder Synchronisieren. Prüfe bei KI-Fehlern Anbieter, Anmeldung und Modell. Kontingent- oder Netzwerkfehler lösen keinen Modellwechsel aus.
 
-Für Textübersetzung nutze [AI Translator](https://github.com/skye1349/obsidian-ai-translator).
+Für Textübersetzung nutze [AI Translation Assistant](https://github.com/skye1349/obsidian-ai-translator).
 
 ## Hilfe
 

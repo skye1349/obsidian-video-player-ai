@@ -57,7 +57,7 @@
 
 API key 保存在笔记库内的插件设置中，共享或同步笔记库时请保护这些设置。AI 无法使用时，检查服务商、登录/API key 和模型；额度不足或网络故障不会触发自动换模型。
 
-文本与文档翻译请使用独立的 [AI Translator](https://github.com/skye1349/obsidian-ai-translator)。
+文本与文档翻译请使用独立的 [AI Translation Assistant](https://github.com/skye1349/obsidian-ai-translator)。
 
 ## 获取帮助
 
