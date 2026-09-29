@@ -27,3 +27,11 @@ export function buildYouTubeFrameFfmpegArgs(
     outputPath
   ];
 }
+
+export function videoFrameCaptureErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  if (/\b403\b|Forbidden/i.test(message)) {
+    return "The video server refused frame extraction (403). Reload the player and try again.";
+  }
+  return message.replace(/https?:\/\/[^\s]+/g, "[video URL]").replace(/\s+/g, " ").slice(0, 220);
+}

@@ -45,6 +45,7 @@ import {
 } from "./youtube";
 import {
   YOUTUBE_FRAME_FORMAT,
+  videoFrameCaptureErrorMessage,
   buildYouTubeFrameFfmpegArgs
 } from "./youtube-frame";
 import {
@@ -2147,7 +2148,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
       this.insertIntoMarkdownView(noteView, `\n\n[${timestamp}](${uri})\n\n![[${path}|${width}]]\n`);
       new Notice(`Copied the frame and inserted it into the note as ${path}.`);
     } catch (error) {
-      new Notice(`Could not capture the video frame: ${getErrorMessage(error)}`);
+      new Notice(`Could not capture the video frame: ${videoFrameCaptureErrorMessage(error)}`);
       console.error("Could not capture YouTube frame", error);
     }
   }

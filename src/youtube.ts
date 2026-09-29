@@ -337,6 +337,39 @@ export class YouTubeLearningView extends ItemView {
         return Buffer.from(canvas.toDataURL("image/png").split(",")[1], "base64");
       }
     }
+    // Embedded players are cross-origin: capture their rendered region through
+    // Electron instead of re-opening a signed media URL outside the browser.
+    const iframe = this.iframeEl;
+    if (iframe) {
+      const win = iframe.ownerDocument.defaultView as (Window & {
+        require?: (name: string) => {
+          getCurrentWebContents: () => {
+            getZoomFactor: () => number;
+            capturePage: (rect: { x: number; y: number; width: number; height: number }) => Promise<{
+              isEmpty: () => boolean;
+              toPNG: () => Uint8Array;
+            }>;
+          };
+        };
+      }) | null;
+      if (!win?.require) return undefined;
+      const bounds = iframe.getBoundingClientRect();
+      // A clipped player would produce an incomplete screenshot.
+      if (bounds.width < 1 || bounds.height < 1 || bounds.left < 0 || bounds.top < 0
+        || bounds.right > win.innerWidth || bounds.bottom > win.innerHeight) return undefined;
+      const contents = win.require("@electron/remote").getCurrentWebContents();
+      const zoom = contents.getZoomFactor();
+      const x = Math.round(bounds.left * zoom);
+      const y = Math.round(bounds.top * zoom);
+      const image = await contents.capturePage({
+        x, y,
+        width: Math.round(bounds.right * zoom) - x,
+        height: Math.round(bounds.bottom * zoom) - y
+      });
+      if (image.isEmpty()) return undefined;
+      const png = image.toPNG();
+      return png.byteLength > 0 ? png : undefined;
+    }
     const webview = this.webviewEl;
     if (!webview) return undefined;
     try {
