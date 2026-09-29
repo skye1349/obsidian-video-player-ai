@@ -1,15 +1,16 @@
 import { browser, expect } from '@wdio/globals';
 import { execFileSync } from 'node:child_process';
-import { mkdtemp, mkdir, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, rm, copyFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 describe('Video Library with real integrated player',()=>{
  let root:string;
+ let extras:string;
  before(async()=>{
   root=await mkdtemp(join(tmpdir(),'video-library-e2e-'));await mkdir(join(root,'第一章'));
   for(const name of ['02 练习.mp4','10 总结.mp4'])execFileSync('/opt/homebrew/bin/ffmpeg',['-v','error','-f','lavfi','-i','color=c=blue:s=320x180:d=8','-c:v','libx264','-pix_fmt','yuv420p','-y',join(root,'第一章',name)]);
  });
- after(async()=>{await rm(root,{recursive:true,force:true});});
+ after(async()=>{await rm(root,{recursive:true,force:true});if(extras)await rm(extras,{recursive:true,force:true});});
  it('scans a folder, renders collection and reads actual durations',async()=>{
   await browser.executeObsidian(({app})=>app.commands.executeCommandById('video-player-ai:open-video-player'));
   await browser.$('button=Add playlist').click();
@@ -77,6 +78,50 @@ describe('Video Library with real integrated player',()=>{
   await browser.waitUntil(async()=>browser.executeObsidian(({app})=>app.workspace.getLeavesOfType('video-library')[0].view.contentEl.querySelector('progress')?.value===0));
   await browser.$('button=Mark as watched').click();
   await browser.waitUntil(async()=>browser.executeObsidian(({app})=>app.workspace.getLeavesOfType('video-library')[0].view.contentEl.querySelector('progress')?.value===2));
+ });
+
+ it('builds an empty playlist from separate locations and a folder without losing manual entries',async()=>{
+  extras=await mkdtemp(join(tmpdir(),'playlist-extra-'));
+  for(const part of ['a','b']){await mkdir(join(extras,part));await copyFile(join(root,'第一章','02 练习.mp4'),join(extras,part,'Bonus.mp4'));}
+  await browser.$('button=Create empty playlist').click();
+  await browser.$('[aria-label="Playlist name"]').setValue('Mixed locations');
+  await browser.$('.modal .mod-cta').click();
+  await browser.waitUntil(async()=>browser.executeObsidian(({app})=>app.plugins.plugins['video-player-ai'].videoLibrary.data.collections.some(c=>c.title==='Mixed locations')));
+  await browser.$('button=Add videos').click();
+  await browser.$('[aria-label="Video file paths"]').setValue([join(extras,'a','Bonus.mp4'),join(extras,'b','Bonus.mp4')].join('\n'));
+  await browser.$('.modal .mod-cta').click();
+  await browser.waitUntil(async()=> (await browser.$$('.vl-row')).length===2);
+  await browser.$('button=Add folder').click();
+  await browser.$('.vl-path-input').setValue(root);
+  await browser.$('.modal .mod-cta').click();
+  await browser.waitUntil(async()=> (await browser.$$('.vl-row')).length===4);
+  await (await browser.$$('.vl-mark-watched'))[0].click();
+  await browser.$('button=Add videos').click();
+  await browser.$('[aria-label="Video file paths"]').setValue(join(extras,'a','Bonus.mp4'));
+  await browser.$('.modal .mod-cta').click();
+  await browser.waitUntil(async()=> !(await browser.$('.modal .mod-cta').isExisting()));
+  expect((await browser.$$('.vl-row')).length).toBe(4);
+  await copyFile(join(root,'第一章','02 练习.mp4'),join(root,'第一章','11 Extra.mp4'));
+  await browser.$('button=Rescan').click();
+  await browser.waitUntil(async()=> (await browser.$$('.vl-row')).length===5);
+  const result=await browser.executeObsidian(async({app})=>{
+   const lib=app.plugins.plugins['video-player-ai'].videoLibrary;await lib.persist();
+   const c=lib.data.collections.find(c=>c.title==='Mixed locations');
+   await lib.play(c,c.episodes[1]);return {id:c.id,count:c.episodes.length,status:c.episodes[0].status,manual:c.episodes.filter(e=>e.absolutePath).length};
+  });expect(result).toMatchObject({count:5,status:'done',manual:2});
+  await browser.waitUntil(async()=>browser.executeObsidian(({app})=>app.workspace.getLeavesOfType('video-player-ai-view').some(l=>l.view.getVideoData?.()?.localPath?.endsWith('/b/Bonus.mp4') && l.view.containerEl.querySelector('video')?.readyState>=2)));
+  await browser.executeObsidian(({app})=>{
+   const view=app.workspace.getLeavesOfType('video-player-ai-view').find(l=>l.view.getVideoData?.()?.localPath?.endsWith('/b/Bonus.mp4')).view;
+   app.plugins.plugins['video-player-ai'].videoLibrary.attachPlayers();view.seekTo(3);
+  });
+  await browser.waitUntil(async()=>browser.executeObsidian(({app})=>app.plugins.plugins['video-player-ai'].videoLibrary.data.collections.find(c=>c.title==='Mixed locations').episodes[1].position>=3));
+  await browser.executeObsidian(async({app})=>{await app.plugins.plugins['video-player-ai'].videoLibrary.persist();await app.plugins.disablePlugin('video-player-ai');await app.plugins.enablePlugin('video-player-ai');});
+  await browser.waitUntil(async()=>browser.executeObsidian(({app})=>app.plugins.plugins['video-player-ai']?.videoLibrary?.data.collections.some(c=>c.title==='Mixed locations')));
+  const saved=await browser.executeObsidian(async({app})=>{
+   const lib=app.plugins.plugins['video-player-ai'].videoLibrary;const c=lib.data.collections.find(c=>c.title==='Mixed locations');await lib.showCollection(c);
+   return {count:c.episodes.length,done:c.episodes[0].status,position:c.episodes[1].position};
+  });expect(saved.count).toBe(5);expect(saved.done).toBe('done');expect(saved.position).toBeGreaterThanOrEqual(3);
+  await browser.saveScreenshot('e2e-artifacts/video-library/multiple-locations.png');
  });
 
 });

@@ -59,6 +59,7 @@ export interface YouTubeSubtitleAppearance {
 export interface YouTubeViewHost {
   openVideoLibrary?: () => void;
   organizeVideoFolder?: () => void;
+  createEmptyPlaylist?: () => void;
   createVideoChatHost?: (view: YouTubeLearningView) => VideoChatHost;
   loadLocalVideo?: (path: string, trackId?: string, transcribe?: boolean) => Promise<YouTubeVideoData>;
   localResourceUrl?: (path: string) => string;
@@ -528,6 +529,7 @@ export class YouTubeLearningView extends ItemView {
     empty.createEl("p", { text: "Watch a video, follow bilingual subtitles, and keep timestamped notes. AI help is available when you need it." });
     const actions = empty.createDiv({ cls: "video-chat-actions" });
     if (this.host.organizeVideoFolder) actions.createEl("button", { text: "Add playlist", cls: "mod-cta" }).addEventListener("click", () => this.host.organizeVideoFolder?.());
+    if (this.host.createEmptyPlaylist) actions.createEl("button", { text: "Create empty playlist" }).addEventListener("click", () => this.host.createEmptyPlaylist?.());
     if (this.host.openVideoLibrary) actions.createEl("button", { text: "My playlists" }).addEventListener("click", () => this.host.openVideoLibrary?.());
     actions.createEl("button", { text: "Open YouTube video" }).addEventListener("click", () => {
       new YouTubeUrlModal(this.app, (url) => { void this.loadVideo(url); }).open();

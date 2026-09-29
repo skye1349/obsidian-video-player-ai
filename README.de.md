@@ -26,14 +26,14 @@ The recordings use English instructions and highlighted clicks. **Cmd/Ctrl** mea
 <details>
 <summary>Organize local playlists and track progress</summary>
 
-1. Click **Add playlist** and select a folder. Subfolders become chapters.
+1. Start with **Add playlist** to import a folder, or **Create empty playlist** to name a playlist first. Use **Add videos** or **Add folder** to combine media from different locations. You can select multiple files or paste one absolute path per line.
 2. Select lessons you have already completed and click **Mark as watched**. Use **Continue watching** to pick up the next lesson.
 
-![Local playlists](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.gif)
+![Local playlists](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.3.0/local-playlists.gif)
 
-[Watch MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.2.0/local-playlists.en.srt)
+[Watch MP4](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.3.0/local-playlists.mp4) · [English subtitles](https://github.com/skye1349/obsidian-video-player-ai/releases/download/1.3.0/local-playlists.en.srt)
 
-Your videos stay in their original folder. **Rescan** adds new files while preserving progress; **Locate folder** reconnects a moved folder. **Mark as unwatched** resets selected lessons. You can also reorder videos within a chapter and keep a note for each video.
+Your videos stay in their original locations. The same file is added only once per playlist; files with the same name in different folders stay separate. **Rescan** updates all folder sources while preserving manually added videos and progress; each **Locate folder** button reconnects only its own source folder. **Mark as unwatched** resets selected lessons. You can also reorder videos within a chapter and keep a note for each video.
 
 Duration scanning uses local **ffprobe**, configurable under **Duration settings**. Unknown durations can be filled in during playback. Playlist data is stored separately from AI settings in `video-library.json`. No AI account is needed for playlists or basic playback.
 

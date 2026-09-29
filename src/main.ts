@@ -542,6 +542,7 @@ export default class ContextualAIReaderPlugin extends Plugin {
     this.registerView(YOUTUBE_VIEW_TYPE, (leaf) => new YouTubeLearningView(leaf, {
       openVideoLibrary: () => { void this.videoLibrary?.open(); },
       organizeVideoFolder: () => this.videoLibrary?.folderModal(),
+      createEmptyPlaylist: () => this.videoLibrary?.createEmptyModal(),
       createVideoChatHost: (view) => ({
         backendLabel: () => `${this.getBackendLabel()} · ${this.getVideoChatBackendConfig().model}`,
         getMessages: (data) => this.settings.videoChats[videoChatKey(data)]?.messages ?? [],

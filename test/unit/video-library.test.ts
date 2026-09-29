@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm, rename, symlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { applyProgress, scanFolder, mergeScan, nextEpisode, probeDuration, episodePath, Collection, Episode } from '../../src/video-library/library';
+import { ensureSources, inspectVideo, mergeFiles, mergeSource, rescanSources, canonicalFolder, applyProgress, scanFolder, mergeScan, nextEpisode, probeDuration, episodePath, Collection, Episode } from '../../src/video-library/library';
 const episode = (path='01.mp4'):Episode=>({id:path,path,title:path,size:10,mtime:1,position:0,status:'new'});
 const collection = (episodes:Episode[]):Collection=>({id:'a',title:'课程',kind:'课程',root:'/tmp/videos',episodes});
 test('recursive natural ordering, ignores hidden files and symlink cycles',async()=>{
@@ -42,4 +42,47 @@ test('continue picks last in-progress available video then first unfinished',()=
 test('duration failures remain unknown and path escape is rejected',async()=>{
  assert.equal(await probeDuration('/does-not-exist','/does-not-exist'),undefined);
  assert.throws(()=>episodePath(collection([]),episode('../outside.mp4')));
+});
+
+test('legacy folder playlists adopt a source without changing IDs, progress or notes',()=>{
+ const e={...episode(),position:40,status:'watching' as const,notePath:'Lesson.md'};
+ const c=collection([e]);const sources=ensureSources(c);
+ assert.equal(sources.length,1);assert.equal(sources[0].root,c.root);
+ assert.equal(c.episodes[0],e);assert.equal(e.position,40);assert.equal(e.notePath,'Lesson.md');
+ assert.equal(episodePath(c,e),'/tmp/videos/01.mp4');
+ assert.equal(ensureSources(c),sources);
+});
+test('mixed sources keep same-name videos distinct, deduplicate exact files, and retain external progress on rescan',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'playlist-mixed-'));
+ try{
+  const a=join(root,'a'),b=join(root,'b'),external=join(root,'external');
+  for(const dir of [a,b,external]){await mkdir(dir);await writeFile(join(dir,'01.mp4'),'video');}
+  const c:Collection={id:'mixed',title:'Mixed',kind:'Other',root:'',sources:[],episodes:[]};
+  const externalVideo=await inspectVideo(join(external,'01.mp4'));
+  mergeFiles(c,[externalVideo]);externalVideo.position=12;externalVideo.status='done';externalVideo.notePath='saved.md';
+  for(const [id,dir] of [['a',a],['b',b]]){
+   const source={id,root:await canonicalFolder(dir)};c.sources!.push(source);mergeSource(c,source,await scanFolder(source.root));
+  }
+  assert.equal(c.episodes.length,3);assert.equal(new Set(c.episodes.map(e=>episodePath(c,e))).size,3);
+  assert.equal(mergeFiles(c,[await inspectVideo(join(external,'01.mp4')),await inspectVideo(join(a,'01.mp4'))]),0);
+  await writeFile(join(a,'02.mp4'),'new video');await rescanSources(c);
+  assert.equal(c.episodes.length,4);assert.equal(c.episodes.find(e=>e.id===externalVideo.id)?.position,12);
+  assert.equal(externalVideo.status,'done');assert.equal(externalVideo.notePath,'saved.md');assert.equal(externalVideo.missing,false);
+  await rename(b,b+'-offline');const unavailable=await rescanSources(c);
+  assert.deepEqual(unavailable,[c.sources!.find(s=>s.id==='b')!.root]);assert.equal(c.episodes.filter(e=>e.sourceId==='b').length,1);
+  assert.equal(externalVideo.status,'done');
+  const sourceB=c.sources!.find(s=>s.id==='b')!;sourceB.root=b+'-offline';await rescanSources(c);
+  assert.equal(sourceB.unavailable,false);assert.equal(c.episodes.length,4);
+  await rm(join(external,'01.mp4'));await rescanSources(c);assert.equal(externalVideo.missing,true);assert.equal(externalVideo.status,'done');
+ }finally{await rm(root,{recursive:true,force:true});}
+});
+test('overlapping folder scans never duplicate a manually added file',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'playlist-overlap-'));
+ try{
+  await mkdir(join(root,'chapter'));await writeFile(join(root,'chapter','01.mp4'),'video');
+  const c:Collection={id:'mix',title:'Mix',kind:'Other',root:'',sources:[],episodes:[]};
+  mergeFiles(c,[await inspectVideo(join(root,'chapter','01.mp4'))]);
+  const source={id:'root',root:await canonicalFolder(root)};c.sources!.push(source);mergeSource(c,source,await scanFolder(source.root));
+  assert.equal(c.episodes.length,1);await rescanSources(c);assert.equal(c.episodes.length,1);assert.ok(c.episodes[0].absolutePath);
+ }finally{await rm(root,{recursive:true,force:true});}
 });

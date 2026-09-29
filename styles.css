@@ -697,3 +697,5 @@
 
 .vl-bulk{margin-top:22px;align-items:center;padding:12px;border-radius:8px;background:var(--background-secondary)}
 .vl-select-all{display:inline-flex;align-items:center;gap:8px;cursor:pointer}.vl-select-video{flex-shrink:0}
+
+.vl-source{display:flex;align-items:center;gap:12px;margin:12px 0}.vl-source .vl-path{flex:1;min-width:0}.vl-video-paths{width:100%;resize:vertical}.vl-episode .vl-path{margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
